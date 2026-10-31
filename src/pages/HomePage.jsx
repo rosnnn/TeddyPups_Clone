@@ -6,6 +6,8 @@ import FAQS from '../data/faq';
 import PuppyModal from '../components/PuppyModal';
 import PupStop from '../components/pup/PupStop';
 import PupJourney from '../components/pup/PupJourney';
+import HeroLineup from '../components/HeroLineup';
+import MeetPupsSection from '../components/MeetPupsSection';
 
 export default function HomePage() {
   const [selectedPuppy, setSelectedPuppy] = useState(null);
@@ -61,66 +63,7 @@ export default function HomePage() {
 
           {/* Hero Lineup */}
           <div className="tp-hero__stage">
-            <ul aria-label="Some of the puppies in our showroom" className="tp-lineup">
-              {heroPuppies.map((pup, idx) => {
-                const tilts = ['-5deg', '3deg', '-2deg', '3deg', '-3deg', '4deg'];
-                const xs = ['9%', '22.5%', '35%', '65%', '77.5%', '91%'];
-                const widths = ['8.6rem', '10.4rem', '9.2rem', '9.4rem', '10.6rem', '8.4rem'];
-                const peeks = [0.62, 0.8, 0.7, 0.74, 0.82, 0.6];
-                return (
-                  <li
-                    key={pup.slug}
-                    className="tp-lineup__seat"
-                    style={{
-                      '--x': xs[idx] || '50%',
-                      '--w': widths[idx] || '9rem',
-                      '--peek': peeks[idx] || 0.7,
-                      '--tilt': tilts[idx] || '0deg',
-                      '--i': idx
-                    }}
-                  >
-                    <Link
-                      to={`/puppies/${pup.slug}`}
-                      className="tp-lineup__pup"
-                      data-pup-friend="true"
-                      aria-label={`Meet ${pup.name}, ${pup.breed}`}
-                    >
-                      <span className="tp-lineup__photo">
-                        <img
-                          alt={`${pup.name}, ${pup.breed} puppy`}
-                          src={pup.coverImage}
-                          loading="eager"
-                        />
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-
-            <ul aria-hidden="true" className="tp-lineup tp-lineup--tags">
-              {heroPuppies.map((pup, idx) => {
-                const tilts = ['-5deg', '3deg', '-2deg', '3deg', '-3deg', '4deg'];
-                const xs = ['9%', '22.5%', '35%', '65%', '77.5%', '91%'];
-                const widths = ['8.6rem', '10.4rem', '9.2rem', '9.4rem', '10.6rem', '8.4rem'];
-                return (
-                  <li
-                    key={pup.slug}
-                    className="tp-lineup__seat"
-                    style={{
-                      '--x': xs[idx] || '50%',
-                      '--w': widths[idx] || '9rem',
-                      '--tilt': tilts[idx] || '0deg',
-                      '--i': idx
-                    }}
-                  >
-                    <span className="tp-lineup__ghost">
-                      <span className="tp-lineup__name font-scrawl">{pup.name}</span>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
+            <HeroLineup friends={availablePuppies} />
 
             {/* Mascot Center Dog Stop: Peekaboo */}
             <PupStop
@@ -151,84 +94,7 @@ export default function HomePage() {
       </div>
 
       {/* SECTION 2: MEET THE PUPS (DOORS TREADMILL) */}
-      <div data-section="meet">
-        <section
-          aria-labelledby="meet-title"
-          className="tp-scene tp-meet"
-          data-pup-scene="true"
-          data-tone="light"
-          style={{ '--sky-top': '#fff1d8', '--sky-bottom': '#fbe3b4' }}
-        >
-          <div data-pin-range="true" style={{ '--pinned': 0 }}>
-            <div className="tp-meet__stage">
-              <header className="tp-meet__head gutter">
-                <div>
-                  <h2 className="font-plush text-huge" id="meet-title">Meet the pups</h2>
-                  <p className="text-lede mt-3 max-w-[44ch] text-[var(--ink-soft)]">
-                    Real puppies, real photos, looking for their families right now.
-                  </p>
-                </div>
-                <Link className="btn btn-primary shrink-0" to="/puppies">
-                  See all available puppies
-                </Link>
-              </header>
-
-              <div className="tp-meet__hall">
-                <ol aria-label="Puppies looking for a family" className="tp-meet__track" data-treadmill="true">
-                  {availablePuppies.slice(0, 10).map((pup, idx) => (
-                    <li key={pup.slug} className="tp-door" data-open="true">
-                      <Link
-                        className="tp-door__link"
-                        to={`/puppies/${pup.slug}`}
-                        style={{ '--door': DOOR_COLORS[idx % DOOR_COLORS.length] }}
-                      >
-                        <span className="tp-door__plate">
-                          <span className="font-plush tp-door__name">{pup.name}</span>
-                          <span className="tp-door__meta">
-                            {pup.breed}, {pup.gender.toLowerCase()}, {pup.age}
-                            {pup.hasVideo ? ', with video' : ''}
-                          </span>
-                        </span>
-                        <span className="tp-door__frame">
-                          <span className="tp-door__room">
-                            <img
-                              alt={`${pup.name}, ${pup.gender.toLowerCase()} ${pup.breed} puppy`}
-                              src={pup.coverImage}
-                              loading="lazy"
-                              sizes="(min-width: 1024px) 15rem, 44vw"
-                            />
-                          </span>
-                          <span aria-hidden="true" className="tp-door__way">
-                            <span className="tp-door__leaf">
-                              <svg aria-hidden="true" className="tp-door__peephole" fill="currentColor" viewBox="0 0 64 64">
-                                <path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5z"></path>
-                              </svg>
-                              <span className="tp-door__knob"></span>
-                            </span>
-                          </span>
-                          <span className="tp-door__tag font-scrawl">Available</span>
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                  <li className="tp-door tp-door--all" data-open="true">
-                    <Link className="tp-door__link" to="/puppies">
-                      <span className="tp-door__frame tp-door__frame--all">
-                        <span className="font-plush tp-door__all">Meet them all</span>
-                      </span>
-                    </Link>
-                  </li>
-                </ol>
-
-                <div aria-hidden="true" className="tp-meet__floor"></div>
-
-                {/* Mascot Center Dog Stop: Hall Treadmill */}
-                <PupStop pose="sit" facing="right" className="tp-meet__teddy" />
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
+      <MeetPupsSection puppies={availablePuppies} />
 
       {/* SECTION 3: TWO WAYS TO MEET YOUR PUPPY */}
       <div data-section="paths">

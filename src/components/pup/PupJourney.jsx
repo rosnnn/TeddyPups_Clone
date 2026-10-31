@@ -174,11 +174,14 @@ export function PupJourney() {
 
     const onCue = (e) => {
       const detail = e.detail;
-      const currentScene = curStopIdx >= 0 ? plan?.meta[curStopIdx]?.scene : null;
-      if (!currentScene || (detail.look && !currentScene.contains(detail.look))) return;
+      if (!detail) return;
       const now = performance.now() / 1000;
-      if (detail.look) lookTarget = { el: detail.look, until: now + (detail.secs ?? 1.6) };
-      if (detail.say) say(detail.say, now);
+      if (detail.look) {
+        lookTarget = { el: detail.look, until: now + (detail.secs ?? 1.5) };
+        controller?.cock(14);
+        say("hm?", now, 1.4);
+      }
+      if (detail.say) say(detail.say, now, 1.5);
     };
 
     const onFocusIn = (e) => {
@@ -584,6 +587,9 @@ export function PupJourney() {
           controller.wag(stopMeta.act === "basket" ? 0.3 : 0.7);
           controller.jolt(0.4);
           nextBasketAction = now + 2.4;
+          if (stopMeta.act === "treadmill") {
+            say("coming!", now, 1.4);
+          }
         }
 
         const meta = plan.meta[stopIndex];
@@ -623,7 +629,7 @@ export function PupJourney() {
           }
         }
 
-        if (!trickSchedule.length && !meta.track && meta.act !== "basket" && now - lastInteractTime > 9) {
+        if (!trickSchedule.length && !meta.track && meta.act !== "basket" && now - lastInteractTime > 3.5) {
           lastInteractTime = now;
           const trickCtx = {
             d: controller,
@@ -640,7 +646,7 @@ export function PupJourney() {
               }
             }
           };
-          trickSchedule = Math.random() < 0.55 ? TRICKS.tilt(trickCtx, now) : [[now, () => controller.wag(1)], [now + 2.4, () => controller.wag(0.7)]];
+          trickSchedule = Math.random() < 0.65 ? TRICKS.tilt(trickCtx, now) : [[now, () => controller.wag(1)], [now + 2.4, () => controller.wag(0.7)]];
         }
       } else {
         if (curStopIdx !== -1) {
@@ -663,11 +669,11 @@ export function PupJourney() {
         if (isAir) {
           controller.setPose("hop");
           controller.stride(0);
-        } else if (stationaryTime > 0.3) {
+        } else if (stationaryTime > 0.25) {
           controller.setPose("stand");
           controller.stride(0);
-          if (stationaryTime > 2.6 && stationaryTime - dt <= 2.6) {
-            say("coming?", now);
+          if (stationaryTime > 0.85 && stationaryTime - dt <= 0.85) {
+            say("coming?", now, 1.4);
           }
         } else {
           controller.setPose("walk");
