@@ -1,208 +1,249 @@
 import React, { useState } from 'react';
+import PupBuddy from '../components/pup/PupBuddy';
+import PUPPIES from '../data/puppies';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    breed: 'Maltipoo',
-    date: '',
-    message: '',
+    email: '',
+    area: '',
+    puppyId: '',
+    message: ''
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      alert('Please fill in your name and phone number so we can reach you.');
+      return;
+    }
+    setIsSubmitted(true);
+    window.dispatchEvent(
+      new CustomEvent('pup:cue', {
+        detail: { say: 'letter received!', secs: 2.0 }
+      })
+    );
   };
 
   return (
-    <div data-page="contact" className="tp-page pt-12 pb-24">
-      <div className="gutter mx-auto max-w-[110rem]">
-        {/* Header */}
-        <header className="mb-14 text-center">
-          <p className="font-scrawl text-lg text-toffee-ink">warm welcome</p>
-          <h1 className="font-plush text-giant text-cocoa mt-2">Get in touch with us</h1>
-          <p className="text-lede mt-4 max-w-[50ch] mx-auto text-cocoa-soft leading-relaxed">
-            Visit our boutique showroom in Downtown Dubai or speak directly with our puppy concierge team.
-          </p>
-        </header>
+    <div className="tp-page" data-page="contact">
+      <section
+        aria-labelledby="contact-title"
+        className="tp-scene"
+        data-pup-scene="true"
+        data-tone="light"
+        style={{ '--sky-top': '#fff9ee', '--sky-bottom': '#f9dca4' }}
+      >
+        <div className="gutter mx-auto max-w-[110rem] pb-24 pt-10 md:pt-16">
+          <header className="grid gap-6 lg:grid-cols-12 lg:items-end">
+            <h1 className="font-plush text-giant max-w-[12ch] lg:col-span-7" id="contact-title">
+              Get in touch with us
+            </h1>
+            <p className="text-lede text-[var(--ink-soft)] lg:col-span-5 lg:pb-3">
+              Have questions about our puppies or adoption process? Fill out the form, and our team will get back to you promptly. Whether ready to adopt or just seeking info, we'd love to hear from you!
+            </p>
+          </header>
 
-        <div className="grid lg:grid-cols-12 gap-12 items-start">
-          {/* Showroom Details Column */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-[2.5rem] bg-milk p-8 shadow-xl border-2 border-honey/40 space-y-6">
-              <h2 className="font-plush text-3xl text-cocoa">Visit us in Downtown Dubai</h2>
-
-              <div className="space-y-4 text-cocoa-soft text-base">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">📍</span>
-                  <div>
-                    <p className="font-bold text-cocoa">Showroom Location</p>
-                    <p className="text-sm">Downtown Dubai, United Arab Emirates</p>
-                    <p className="text-xs text-cocoa-soft/80 mt-0.5">Complimentary valet parking available</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">⏰</span>
-                  <div>
-                    <p className="font-bold text-cocoa">Visiting Hours</p>
-                    <p className="text-sm">Daily from 10:00 AM – 9:00 PM</p>
-                    <p className="text-xs text-cocoa-soft/80 mt-0.5">Walk-ins welcome, private appointments recommended</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">💬</span>
-                  <div>
-                    <p className="font-bold text-cocoa">WhatsApp & Call</p>
-                    <p className="text-sm font-semibold text-toffee">+971 54 167 6733</p>
-                    <p className="text-xs text-cocoa-soft/80 mt-0.5">Instant response in English, Arabic & Russian</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">✉️</span>
-                  <div>
-                    <p className="font-bold text-cocoa">Email</p>
-                    <p className="text-sm">teddypupsadmin@gmail.com</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <a
-                  href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I'd%20like%20to%20schedule%20a%20visit%20to%20your%20Downtown%20Dubai%20showroom."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-whatsapp w-full flex justify-center text-base"
-                >
-                  Message on WhatsApp
-                </a>
-              </div>
-            </div>
-
-            {/* Stylized Map View */}
-            <div className="rounded-[2.5rem] bg-[#e8e0d5] p-6 shadow-md border-2 border-cocoa/10 relative overflow-hidden aspect-[16/10] flex flex-col justify-between">
-              <div className="z-10 bg-milk/90 backdrop-blur-sm p-4 rounded-2xl max-w-xs shadow-sm">
-                <p className="font-plush text-lg text-cocoa font-bold">Downtown Dubai</p>
-                <p className="text-xs text-cocoa-soft">Near Burj Khalifa & Dubai Mall</p>
-              </div>
-              <div className="z-10 flex justify-end">
-                <a
-                  href="https://maps.google.com/?q=Downtown+Dubai"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-cocoa px-4 py-2 text-xs font-semibold text-milk hover:bg-toffee transition"
-                >
-                  Open in Google Maps ↗
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Letter / Booking Form Column */}
-          <div className="lg:col-span-7">
-            <div className="rounded-[2.5rem] bg-[#fffaf0] p-8 md:p-12 shadow-2xl border-4 border-honey relative">
-              <div className="absolute right-8 top-8 rounded-xl border-2 border-dashed border-toffee p-2 text-center text-xs font-scrawl text-toffee rotate-6">
-                <span>POSTAGE PAID</span>
-                <br />
-                <span>DUBAI UAE</span>
-              </div>
-
-              <p className="font-scrawl text-2xl text-cocoa mb-6">Dear TeddyPups team,</p>
-
-              {submitted ? (
-                <div className="rounded-2xl bg-honey/40 p-8 text-center space-y-4 animate-fadeIn">
-                  <span className="text-5xl block">💌</span>
-                  <h3 className="font-plush text-3xl text-cocoa">Thank you, {formData.name}!</h3>
-                  <p className="text-cocoa-soft text-base">
-                    We received your note. Our concierge will contact you on WhatsApp ({formData.phone}) to confirm your visit date.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setSubmitted(false)}
-                    className="btn btn-primary mt-4"
-                  >
-                    Send another note
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="font-scrawl text-lg text-cocoa block">My name is:</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Your full name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full rounded-2xl border-2 border-honey/60 bg-milk px-5 py-3.5 text-cocoa placeholder:text-cocoa/30 focus:border-toffee focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="font-scrawl text-lg text-cocoa block">My phone / WhatsApp:</label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="+971 50 000 0000"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full rounded-2xl border-2 border-honey/60 bg-milk px-5 py-3.5 text-cocoa placeholder:text-cocoa/30 focus:border-toffee focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="font-scrawl text-lg text-cocoa block">Preferred Breed:</label>
-                      <select
-                        value={formData.breed}
-                        onChange={(e) => setFormData({ ...formData, breed: e.target.value })}
-                        className="w-full rounded-2xl border-2 border-honey/60 bg-milk px-5 py-3.5 text-cocoa focus:border-toffee focus:outline-none"
-                      >
-                        <option value="Maltipoo">Maltipoo</option>
-                        <option value="Korean Teacup Poodle">Korean Teacup Poodle</option>
-                        <option value="Pomeranian">Pomeranian</option>
-                        <option value="Cavapoo">Cavapoo</option>
-                        <option value="Shih Tzu">Shih Tzu</option>
-                        <option value="Other / Surprise me">Other / Surprise me</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="font-scrawl text-lg text-cocoa block">I would love to visit on:</label>
-                    <input
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      className="w-full rounded-2xl border-2 border-honey/60 bg-milk px-5 py-3.5 text-cocoa focus:border-toffee focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="font-scrawl text-lg text-cocoa block">Personal Note / Message:</label>
-                    <textarea
-                      rows="4"
-                      placeholder="Tell us about your home, questions about sizing, or puppy preferences..."
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full rounded-2xl border-2 border-honey/60 bg-milk px-5 py-3.5 text-cocoa placeholder:text-cocoa/30 focus:border-toffee focus:outline-none"
-                    ></textarea>
-                  </div>
-
-                  <div className="pt-2">
-                    <button type="submit" className="btn btn-primary w-full flex justify-center text-lg">
-                      Send Letter &amp; Request Visit
+          <div className="mt-12 grid gap-12 lg:grid-cols-12 lg:gap-14">
+            {/* Right Column: Hand-written Letter Form */}
+            <div className="lg:col-span-7 lg:col-start-6 lg:row-start-1">
+              <div className="tp-post" data-phase={isSubmitted ? 'sent' : 'writing'}>
+                {isSubmitted ? (
+                  <div className="tp-letterform py-12 text-center">
+                    <span aria-hidden="true" className="tp-letter__stamp mx-auto mb-6 block">
+                      <svg aria-hidden="true" className="size-9 text-toffee" fill="currentColor" viewBox="0 0 64 64">
+                        <path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" />
+                      </svg>
+                    </span>
+                    <h3 className="font-plush text-3xl text-[var(--ink)]">Letter posted!</h3>
+                    <p className="font-scrawl text-xl mt-3 text-[var(--ink-soft)]">
+                      Thank you! We've received your note and will be in touch shortly on WhatsApp or phone.
+                    </p>
+                    <button
+                      type="button"
+                      className="btn btn-ghost mt-8"
+                      onClick={() => {
+                        setFormData({ name: '', phone: '', email: '', area: '', puppyId: '', message: '' });
+                        setIsSubmitted(false);
+                      }}
+                    >
+                      Write another letter
                     </button>
                   </div>
-                </form>
-              )}
+                ) : (
+                  <form className="tp-letterform" onSubmit={handleSubmit} noValidate>
+                    <span aria-hidden="true" className="tp-letter__stamp">
+                      <svg aria-hidden="true" className="size-9 text-toffee" fill="currentColor" viewBox="0 0 64 64">
+                        <path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" />
+                      </svg>
+                    </span>
+
+                    <p className="font-scrawl tp-letterform__greeting">Dear TeddyPups,</p>
+
+                    <p className="tp-letterform__line">
+                      my name is{' '}
+                      <span className="tp-blank" style={{ '--size': '16ch' }}>
+                        <input
+                          aria-label="Your name (required)"
+                          autoComplete="name"
+                          maxLength={80}
+                          minLength={2}
+                          name="name"
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        />
+                      </span>
+                      , and you can reach me on{' '}
+                      <span className="tp-blank" style={{ '--size': '15ch' }}>
+                        <input
+                          aria-label="Phone or WhatsApp number with country code (required)"
+                          autoComplete="tel"
+                          inputMode="tel"
+                          name="phone"
+                          placeholder="+971 50 123 4567"
+                          required
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        />
+                      </span>{' '}
+                      or by email at{' '}
+                      <span className="tp-blank" style={{ '--size': '20ch' }}>
+                        <input
+                          aria-label="Email (optional)"
+                          autoComplete="email"
+                          name="email"
+                          placeholder="optional"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        />
+                      </span>
+                      .
+                    </p>
+
+                    <p className="tp-letterform__line">
+                      I live in{' '}
+                      <span className="tp-blank" style={{ '--size': '13ch' }}>
+                        <input
+                          aria-label="Your area (optional)"
+                          autoComplete="address-level2"
+                          maxLength={80}
+                          name="area"
+                          placeholder="e.g. Dubai Marina"
+                          value={formData.area}
+                          onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                        />
+                      </span>
+                      , and I'm curious about{' '}
+                      <span className="tp-blank tp-blank--select">
+                        <select
+                          name="puppyId"
+                          value={formData.puppyId}
+                          onChange={(e) => setFormData({ ...formData, puppyId: e.target.value })}
+                        >
+                          <option value="">any puppy (not sure yet)</option>
+                          {PUPPIES.slice(0, 14).map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.name} ({p.breed}, {p.gender})
+                            </option>
+                          ))}
+                        </select>
+                      </span>
+                      .
+                    </p>
+
+                    <label className="sr-only" htmlFor="contact-note">
+                      Your message (optional)
+                    </label>
+                    <textarea
+                      id="contact-note"
+                      className="tp-letterform__note"
+                      maxLength={2000}
+                      name="message"
+                      placeholder="Anything else you'd like to tell us…"
+                      rows={4}
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    />
+
+                    <div className="tp-letterform__sign">
+                      <p className="font-scrawl">with love, a future puppy parent</p>
+                      <button className="btn btn-primary" type="submit">
+                        Post my letter
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+
+              {/* Teddy mascot waiting for letter */}
+              <div className="pup-buddy ml-auto mr-6 -mt-3 w-36 md:w-40" data-facing="left">
+                <PupBuddy facing="left" pose="sit" />
+              </div>
+            </div>
+
+            {/* Left Column: Downtown Dubai Shopfront */}
+            <div className="lg:col-span-5 lg:col-start-1 lg:row-start-1">
+              <section className="tp-shopfront mt-12 relative overflow-hidden rounded-3xl bg-[var(--color-creme)] shadow-sm">
+                <svg
+                  aria-hidden="true"
+                  className="absolute -bottom-1 right-0 w-3/4 text-toffee/30 pointer-events-none"
+                  viewBox="0 0 300 120"
+                >
+                  <path
+                    d="M4 116h292M20 116V78h16v38M44 116V60h18v56M70 116V84h12v32M150 116V36l4-6v-14l3-4 3 4v14l4 6v80M118 116V70l12-8v54M174 116V64l14 8v44M200 116V82h18v34M226 116V56h14v60M248 116V88h22v28"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2.6"
+                  />
+                </svg>
+
+                <div className="tp-visit relative p-7 pt-6">
+                  <div>
+                    <h2 className="font-plush text-[2rem] leading-tight" id="visit-title">
+                      Visit us in Downtown Dubai
+                    </h2>
+                    <p className="mt-3 max-w-[38ch] text-cocoa-soft">
+                      Step into our Downtown Dubai showroom and experience the joy of choosing your puppy face-to-face.
+                    </p>
+
+                    <p className="mt-4 flex items-center gap-2 font-semibold text-[var(--ink)]">
+                      <svg aria-hidden="true" className="size-5 shrink-0 text-toffee-deep" fill="currentColor" viewBox="0 0 64 64">
+                        <path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" />
+                      </svg>
+                      Downtown Dubai, United Arab Emirates
+                    </p>
+
+                    <a
+                      className="btn btn-ghost mt-6 !bg-milk"
+                      href="https://maps.app.goo.gl/ZdJvwHBSQWWZT54s7"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Open in Google Maps
+                    </a>
+                  </div>
+
+                  <figure className="tp-visit__photo mt-6 relative h-56 w-full overflow-hidden rounded-2xl">
+                    <img
+                      alt="The apricot teddy bear puppy from our showroom"
+                      src="/media/skvodl2NZiKq/cefab5eee9/27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg"
+                      loading="lazy"
+                      className="size-full object-cover"
+                    />
+                  </figure>
+                </div>
+              </section>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

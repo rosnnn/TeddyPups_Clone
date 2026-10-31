@@ -8,6 +8,9 @@ import PupStop from '../components/pup/PupStop';
 import PupJourney from '../components/pup/PupJourney';
 import HeroLineup from '../components/HeroLineup';
 import MeetPupsSection from '../components/MeetPupsSection';
+import FlightAnimation from '../components/FlightAnimation';
+import JourneyChatSection from '../components/JourneyChatSection';
+import PhotoLightbox from '../components/PhotoLightbox';
 
 export default function HomePage() {
   const [selectedPuppy, setSelectedPuppy] = useState(null);
@@ -16,7 +19,67 @@ export default function HomePage() {
   const availablePuppies = PUPPIES.filter((p) => p.status === 'Available');
   const featuredPuppies = availablePuppies.slice(0, 8);
   const heroPuppies = featuredPuppies.slice(0, 6);
-  const previewReviews = REVIEWS.slice(0, 8);
+  
+  const HOME_PREVIEWS = [
+    {
+      image: '/media/dI8Jv0KRTiLJ/d2d7e5375b/27b888_7d940ce5701f48d98327e4a242b53ac4-mv2.jpg',
+      caption: 'Lulu 🧸 with her new mummy ❤️',
+      tilt: '-2.2deg',
+      tapeColor: '#f6d79a',
+      tapeStyle: 'center'
+    },
+    {
+      image: '/media/TI-WtaFssfQt/c41fb2a387/27b888_15920f828b864dd1b44b98ec4e964c53-mv2.jpg',
+      caption: 'Adorable Maltipoo baby 🧸❤️',
+      tilt: '1.6deg',
+      tapeColor: '#f9cdbf',
+      tapeStyle: 'left'
+    },
+    {
+      image: '/media/j6T9eswP2eS8/59c6879a1d/27b888_bc27df54dcce410196c6016475364ff3-mv2.jpg',
+      caption: 'My new teddy puppy 🥰🧸',
+      tilt: '-0.9deg',
+      tapeColor: '#cfe5f6',
+      tapeStyle: 'right'
+    },
+    {
+      image: '/media/HJgL4rRnmReV/533701358f/27b888_082e47dfd8144423a96dc70d966fa5b2-mv2.jpg',
+      caption: 'Our new puppies 🧸🥰🤗',
+      tilt: '2.4deg',
+      tapeColor: '#f6d79a',
+      tapeStyle: 'corners'
+    },
+    {
+      image: '/media/uc5ANs5jm7r7/7160d8b7b1/27b888_f7f4966e59e94db591784d4ec546682f-mv2.jpg',
+      caption: 'New puppy 🧸😍',
+      tilt: '-1.5deg',
+      tapeColor: '#e9dcc4',
+      tapeStyle: 'center'
+    },
+    {
+      image: '/media/pRJubyqHw8p7/d58c4c07ee/27b888_b073c5815f7c4f92ad9a57741a653663-mv2.jpg',
+      caption: 'Gang of 3 😍🧸',
+      tilt: '0.8deg',
+      tapeColor: '#f6d79a',
+      tapeStyle: 'right'
+    },
+    {
+      image: '/media/4wOJk9azop_-/65ecf66bf0/27b888_cfe895dbcc2d4bff85f890be9b496543-mv2.jpg',
+      caption: 'So happy 😍😍',
+      tilt: '-2.6deg',
+      tapeColor: '#f9cdbf',
+      tapeStyle: 'left'
+    },
+    {
+      image: '/media/3h20rIasJCOa/10c307cb1c/27b888_a7e7ab6a931e4c79a798bab9927d396e-mv2.jpg',
+      caption: 'New pup 🤗💫',
+      tilt: '1.2deg',
+      tapeColor: '#cfe5f6',
+      tapeStyle: 'center'
+    }
+  ];
+  const [activePhotoIdx, setActivePhotoIdx] = useState(null);
+
   const previewFaqs = FAQS.slice(0, 3);
 
   // Door color cycle
@@ -119,90 +182,7 @@ export default function HomePage() {
                   Puppies in Dubai
                 </h3>
                 <div className="tp-way__scene" data-pup-look="true">
-                  <svg aria-hidden="true" className="tp-way__skyline" viewBox="0 0 300 120">
-                    <path
-                      d="M4 116h292M20 116V78h16v38M44 116V60h18v56M70 116V84h12v32M150 116V36l4-6v-14l3-4 3 4v14l4 6v80M118 116V70l12-8v54M174 116V64l14 8v44M200 116V82h18v34M226 116V56h14v60M248 116V88h22v28"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2.6"
-                    ></path>
-                  </svg>
-                  <figure className="tp-window">
-                    <span className="tp-window__glass">
-                      <img
-                        alt="A tiny apricot teddy bear puppy held up in the TeddyPups showroom"
-                        src="/media/FHyoHcIosLZE/60f6e7e00a/27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg"
-                        style={{
-                          position: 'absolute',
-                          height: '100%',
-                          width: '100%',
-                          left: 0,
-                          top: 0,
-                          right: 0,
-                          bottom: 0,
-                          objectFit: 'cover',
-                          objectPosition: '54.3% 48.3%'
-                        }}
-                      />
-                    </span>
-                    <figcaption className="font-scrawl">In our showroom</figcaption>
-                  </figure>
-                </div>
-                <p className="tp-way__text">
-                  See them, love them, take them home. Come meet our locally available puppies before you decide.
-                </p>
-                <Link className="btn btn-primary" to="/puppies">
-                  Meet local puppies
-                </Link>
-              </article>
-
-              {/* Way 2: Imported for You */}
-              <article aria-labelledby="way-imported" className="tp-way tp-way--right">
-                <h3 className="tp-sign tp-sign--right font-plush" id="way-imported">
-                  Imported for you
-                </h3>
-                <div className="tp-way__scene" data-pup-look="true">
-                  <div className="tp-flight">
-                    <svg
-                      aria-label="A plane bringing a Korean Teacup Maltipoo puppy from Korea to Dubai"
-                      role="img"
-                      viewBox="0 0 660 300"
-                    >
-                      <defs>
-                        <clipPath id="_R_flight_porthole_">
-                          <circle r="25"></circle>
-                        </clipPath>
-                      </defs>
-                      <path className="tp-flight__route" d="M40 250 C 170 40, 470 20, 620 168"></path>
-                      <circle className="tp-flight__dot" cx="40" cy="250" r="7"></circle>
-                      <circle className="tp-flight__dot" cx="620" cy="168" r="7"></circle>
-                      <text className="tp-flight__label" textAnchor="middle" x="40" y="284">Korea</text>
-                      <text className="tp-flight__label" textAnchor="middle" x="620" y="202">Dubai</text>
-                      <g transform="translate(410 70)">
-                        <g transform="translate(-126 -78)">
-                          <path className="tp-flight__wing" d="M28 60 L8 26 L34 26 L60 54 Z"></path>
-                          <path className="tp-flight__wing tp-flight__wing--far" d="M108 112 L142 156 L172 156 L158 112 Z"></path>
-                          <path className="tp-flight__body" d="M20 80 C20 52 52 44 80 44 L168 44 C200 44 224 60 232 80 C224 100 200 112 168 112 L80 112 C52 112 20 104 20 80 Z"></path>
-                          <path className="tp-flight__wing" d="M104 44 L138 2 L168 2 L154 44 Z"></path>
-                          <path className="tp-flight__line" d="M206 64 C215 67 221 73 224 80"></path>
-                        </g>
-                        <g transform="translate(10 2)">
-                          <image
-                            clipPath="url(#_R_flight_porthole_)"
-                            height="50"
-                            href="/media/gAaGwoGej2g6/5523e884dd/b942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg"
-                            preserveAspectRatio="xMidYMid slice"
-                            width="50"
-                            x="-25"
-                            y="-25"
-                          />
-                          <circle className="tp-flight__porthole" r="25"></circle>
-                        </g>
-                      </g>
-                    </svg>
-                  </div>
+                  <FlightAnimation />
                 </div>
                 <p className="tp-way__text">
                   Exclusive Korean teacup puppies, delivered. Order from the world's most reputable breeders and let us handle the import.
@@ -221,176 +201,7 @@ export default function HomePage() {
 
       {/* SECTION 4: YOUR PUPPY JOURNEY */}
       <div data-section="journey">
-        <section
-          aria-labelledby="journey-title"
-          className="tp-scene tp-chat"
-          data-pup-scene="true"
-          data-tone="light"
-          style={{ '--sky-top': '#f7d18d', '--sky-bottom': '#f0b866' }}
-        >
-          <div className="tp-chat__grid gutter" data-pin-range="true">
-            <div className="tp-chat__story">
-              <h2 className="font-plush text-huge" id="journey-title">Your puppy journey</h2>
-              <p className="text-lede mt-5 max-w-[42ch] text-[var(--ink-soft)]">
-                A premium, step-by-step concierge experience. We make adoption simple, secure, and purely joyful.
-              </p>
-              <ol className="tp-chat__steps">
-                <li className="tp-chat__step" data-done="true">
-                  <span aria-hidden="true" className="tp-chat__num font-plush">1</span>
-                  <h3 className="font-plush tp-chat__title">Choose your breed</h3>
-                  <p className="tp-chat__text">Select your preferred breed or tell us what you're looking for. We'll guide you based on availability and your lifestyle.</p>
-                </li>
-                <li className="tp-chat__step" data-done="true">
-                  <span aria-hidden="true" className="tp-chat__num font-plush">2</span>
-                  <h3 className="font-plush tp-chat__title">Get photos &amp; details</h3>
-                  <p className="tp-chat__text">Our team will share real photos, health details, and all necessary information directly on WhatsApp.</p>
-                </li>
-                <li className="tp-chat__step" data-active="true">
-                  <span aria-hidden="true" className="tp-chat__num font-plush">3</span>
-                  <h3 className="font-plush tp-chat__title">Secure &amp; safe delivery</h3>
-                  <p className="tp-chat__text">Once confirmed, we handle everything professionally and ensure your puppy reaches you safely and stress-free.</p>
-                </li>
-              </ol>
-              <Link className="btn btn-ghost tp-chat__cta" to="/how-it-works">How it works</Link>
-            </div>
-
-            <div className="tp-chat__side">
-              <div aria-label="A WhatsApp conversation with TeddyPups U.A.E." className="tp-phone" role="group">
-                <div className="tp-phone__bar">
-                  <img
-                    alt=""
-                    className="tp-phone__avatar"
-                    height="40"
-                    width="40"
-                    src="/brand/logo.png"
-                  />
-                  <span>
-                    <span className="tp-phone__name">TeddyPups U.A.E.</span>
-                    <span className="tp-phone__status">online</span>
-                  </span>
-                </div>
-
-                <div className="tp-phone__screen">
-                  <p className="tp-msg tp-msg--me">Hi TeddyPups! I'd love to know more about your puppies.</p>
-
-                  <div className="tp-msg-group" data-show="true" data-step="0">
-                    <div className="tp-msg tp-msg--them">
-                      <p>Select your preferred breed or tell us what you're looking for. We'll guide you based on availability and your lifestyle.</p>
-                      <ul aria-label="Breeds we have now" className="tp-chips">
-                        <li><Link to="/puppies">Maltipoo</Link></li>
-                        <li><Link to="/puppies">Pomeranian</Link></li>
-                        <li><Link to="/puppies">Poodle</Link></li>
-                        <li><Link to="/puppies">Cavapoo</Link></li>
-                        <li><Link to="/puppies">Shih Tzu</Link></li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="tp-msg-group" data-show="true" data-step="1">
-                    <div className="tp-msg tp-msg--them tp-msg--media">
-                      <div className="tp-snaps">
-                        <span className="tp-snaps__one">
-                          <img
-                            alt="Apricot puppy in showroom"
-                            src="/media/FHyoHcIosLZE/60f6e7e00a/27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg"
-                          />
-                        </span>
-                        <span className="tp-snaps__one">
-                          <img
-                            alt="Apricot puppy close up"
-                            src="/media/Vi-kzyvemRl4/e740ed8a24/27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg"
-                          />
-                        </span>
-                        <span className="tp-snaps__one">
-                          <img
-                            alt="Apricot puppy looking up"
-                            src="/media/g_e4ebbc7fyG/8276289ae7/27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg"
-                          />
-                        </span>
-                        <span className="tp-snaps__one">
-                          <img
-                            alt="Apricot puppy held up"
-                            src="/media/skvodl2NZiKq/cefab5eee9/27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg"
-                          />
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="tp-msg tp-msg--them tp-msg--media">
-                      <div className="tp-clip">
-                        <video
-                          aria-label="Video of puppy"
-                          loop
-                          muted
-                          playsInline
-                          poster="/media/FHyoHcIosLZE/60f6e7e00a/27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg"
-                          src="/media/dSAUmXs8Qai9/ef39cbea20/27b888_323008bb0f6a41d4bde2a0da7206cd98-720p.mp4"
-                        />
-                        <button
-                          aria-label="Play video"
-                          className="tp-clip__play"
-                          type="button"
-                          onClick={(e) => {
-                            const v = e.currentTarget.previousElementSibling;
-                            if (v.paused) {
-                              v.play();
-                              setVideoPlaying(true);
-                            } else {
-                              v.pause();
-                              setVideoPlaying(false);
-                            }
-                          }}
-                        >
-                          <svg aria-hidden="true" viewBox="0 0 24 24">
-                            {videoPlaying ? (
-                              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                            ) : (
-                              <path d="M8 5v14l11-7z" />
-                            )}
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                    <p className="tp-msg tp-msg--them">
-                      Our team will share real photos, health details, and all necessary information directly on WhatsApp.
-                    </p>
-                  </div>
-
-                  <div className="tp-msg-group" data-show="true" data-step="2">
-                    <div className="tp-msg tp-msg--them">
-                      <p>Once confirmed, we handle everything professionally and ensure your puppy reaches you safely and stress-free.</p>
-                      <svg aria-hidden="true" className="tp-route" viewBox="0 0 220 70">
-                        <path className="tp-route__line" d="M14 52 C 60 6, 120 70, 170 28"></path>
-                        <circle className="tp-route__dot" cx="14" cy="52" r="5"></circle>
-                        <path className="tp-route__home" d="M164 32 l12 -12 l12 12 v14 h-24 z"></path>
-                        <path className="tp-route__heart" d="M176 42 c-2-3-7-2-6 2c1 3 6 5 6 5s5-2 6-5c1-4-4-5-6-2z"></path>
-                      </svg>
-                    </div>
-                  </div>
-
-                  <p aria-hidden="true" className="tp-typing" data-show="false">
-                    <span></span><span></span><span></span>
-                  </p>
-                </div>
-
-                <a
-                  className="tp-phone__compose"
-                  href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I'd%20love%20to%20know%20more%20about%20your%20puppies."
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <span>Say hello on WhatsApp</span>
-                  <svg aria-hidden="true" viewBox="0 0 24 24">
-                    <path d="M3 20l18-8L3 4v6l12 2-12 2z"></path>
-                  </svg>
-                </a>
-              </div>
-
-              {/* Mascot Center Dog Stop: WhatsApp Phone */}
-              <PupStop pose="sit" facing="right" className="tp-chat__teddy" />
-            </div>
-          </div>
-        </section>
+        <JourneyChatSection />
       </div>
 
       {/* SECTION 5: WHY FAMILIES TRUST TEDDYPUPS (PASSPORT) */}
@@ -497,15 +308,23 @@ export default function HomePage() {
           <div className="tp-photowall">
             <div className="tp-photowall__wall">
               <ul aria-label="Photos from TeddyPups families" className="tp-photowall__prints">
-                {previewReviews.map((rev, i) => (
-                  <li key={rev.id || i} data-reveal="true" style={{ '--d': `${110 * [3, 0, 5, 1, 6, 2, 7, 4][i % 8]}ms` }}>
+                {HOME_PREVIEWS.map((rev, i) => (
+                  <li key={i} data-reveal="true" style={{ '--d': `${110 * [3, 0, 5, 1, 6, 2, 7, 4][i % 8]}ms` }}>
                     <button
                       aria-label={`Open photo ${i + 1} of 64: ${rev.caption}`}
                       className="tp-photowall__print"
                       type="button"
+                      onClick={() => setActivePhotoIdx(i)}
                     >
-                      <span className="tp-polaroid" style={{ '--tilt': `${rev.tilt}deg`, '--tape': rev.tapeColor, '--i': i }}>
-                        <span aria-hidden="true" className={`tp-tape tp-tape--${rev.tapeStyle}`}></span>
+                      <span className="tp-polaroid" style={{ '--tilt': rev.tilt, '--tape': rev.tapeColor, '--i': i }}>
+                        {rev.tapeStyle === 'corners' ? (
+                          <>
+                            <span aria-hidden="true" className="tp-tape tp-tape--tl" />
+                            <span aria-hidden="true" className="tp-tape tp-tape--tr" />
+                          </>
+                        ) : (
+                          <span aria-hidden="true" className={`tp-tape tp-tape--${rev.tapeStyle}`} />
+                        )}
                         <span className="tp-polaroid__photo">
                           <img
                             alt="A happy TeddyPups family with their new puppy"

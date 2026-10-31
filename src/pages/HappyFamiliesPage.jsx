@@ -1,118 +1,136 @@
 import React, { useState } from 'react';
 import REVIEWS from '../data/reviews';
+import PupBuddy from '../components/pup/PupBuddy';
+import PhotoLightbox from '../components/PhotoLightbox';
+
+const TAPE_STYLES = ['center', 'left', 'right', 'corners'];
 
 export default function HappyFamiliesPage() {
-  const [activePhoto, setActivePhoto] = useState(null);
+  const [activePhotoIdx, setActivePhotoIdx] = useState(null);
+
+  const reviewsList = Array.isArray(REVIEWS) ? REVIEWS : (REVIEWS.REVIEWS || []);
 
   return (
-    <div data-page="happy-families" className="tp-page pt-12 pb-24">
-      <div className="gutter mx-auto max-w-[110rem]">
-        {/* Header */}
-        <header className="mb-14 text-center">
-          <p className="font-scrawl text-lg text-toffee-ink">real stories & moments</p>
-          <h1 className="font-plush text-giant text-cocoa mt-2">Happy families</h1>
-          <p className="text-lede mt-4 max-w-[56ch] mx-auto text-cocoa-soft leading-relaxed">
-            Over the years, we've had the honor of helping families across Dubai, the UAE, and worldwide welcome their newest best friend. Here are some of their cherished snapshots.
-          </p>
-        </header>
-
-        {/* Featured Testimonials */}
-        <div className="mb-16 grid md:grid-cols-3 gap-6">
-          {[
-            {
-              quote: "Our tiny teacup Maltipoo has brought so much warmth and giggles into our home. The team took care of every single vaccine and health document.",
-              author: "Layla & Omar K.",
-              location: "Downtown Dubai",
-            },
-            {
-              quote: "The concierge import process was flawless. We received weekly video updates of our puppy before arrival. She arrived safe, fluffy, and energetic!",
-              author: "Jessica T.",
-              location: "Palm Jumeirah",
-            },
-            {
-              quote: "24/7 post-arrival support is real! Anytime I had a question about diet or potty training, the TeddyPups team answered within 5 minutes.",
-              author: "Fahad Al-M.",
-              location: "Abu Dhabi",
-            },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="rounded-3xl bg-milk p-6 shadow-md border-2 border-honey/30 flex flex-col justify-between"
-            >
-              <p className="font-plush-text text-cocoa text-base italic leading-relaxed">
-                “{item.quote}”
+    <div className="tp-page" data-page="families">
+      <section
+        aria-labelledby="families-title"
+        className="tp-scene tp-memories"
+        data-pup-scene="true"
+        data-tone="light"
+        style={{ '--sky-top': '#fffcf5', '--sky-bottom': '#f7dcab' }}
+      >
+        <div className="gutter mx-auto max-w-[110rem] pb-24 pt-10 md:pt-16">
+          {/* Header */}
+          <div className="tp-memories__head">
+            <div>
+              <p className="font-scrawl text-lg text-toffee-ink" data-reveal="true">
+                our wall of happy endings
               </p>
-              <footer className="mt-4 pt-4 border-t border-cocoa/10">
-                <p className="font-scrawl text-toffee text-lg font-bold">{item.author}</p>
-                <p className="text-xs text-cocoa-soft font-medium">{item.location}</p>
-              </footer>
-            </div>
-          ))}
-        </div>
-
-        {/* Polaroid Memory Wall */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {REVIEWS.map((rev, idx) => (
-            <div
-              key={idx}
-              onClick={() => setActivePhoto(rev)}
-              className="tp-polaroid group block rounded-2xl bg-milk p-3 pb-5 shadow-lg transition-transform hover:scale-105 hover:z-20 cursor-pointer"
-              style={{
-                transform: `rotate(${rev.tilt || '0deg'})`,
-              }}
-            >
-              {/* Tape Graphic */}
-              <div
-                className="tp-tape tp-tape--center mx-auto mb-2 h-4 w-14 rounded-sm opacity-80"
-                style={{ backgroundColor: rev.tape || '#f6d79a' }}
-              ></div>
-
-              <div className="aspect-square w-full overflow-hidden rounded-xl bg-cocoa/10 mb-3 shadow-inner">
-                <img
-                  src={rev.image}
-                  alt={rev.caption}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-              </div>
-
-              <p className="font-scrawl text-cocoa text-sm text-center px-1 font-medium">
-                {rev.caption}
+              <h1 className="font-plush text-giant tp-memories__title" data-reveal="true" id="families-title">
+                Happy families
+                <svg aria-hidden="true" className="tp-memories__heart" viewBox="0 0 48 44">
+                  <path
+                    d="M24 40C10 30 4 22 4 14.5 4 8.7 8.6 4 14.3 4c4.1 0 7.6 2.4 9.7 6 2.1-3.6 5.6-6 9.7-6C39.4 4 44 8.7 44 14.5 44 22 38 30 24 40z"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                  />
+                </svg>
+              </h1>
+              <p className="text-lede mt-6 max-w-[50ch] text-cocoa-soft" data-reveal="true">
+                Nothing makes us happier than seeing our puppies in loving homes! Here are some beautiful moments shared by our amazing clients after welcoming their furry friends.
+              </p>
+              <p className="font-scrawl mt-5 text-lg text-toffee-ink" data-reveal="true">
+                {reviewsList.length} moments and counting
               </p>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Lightbox Modal */}
-      {activePhoto && (
-        <div
-          role="dialog"
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-cocoa/80 p-4 backdrop-blur-md animate-fadeIn"
-          onClick={() => setActivePhoto(null)}
-        >
-          <div
-            className="relative max-w-2xl rounded-3xl bg-milk p-6 shadow-2xl text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setActivePhoto(null)}
-              className="absolute right-4 top-4 flex size-10 items-center justify-center rounded-full bg-cocoa text-milk hover:scale-105 transition"
-            >
-              ✕
-            </button>
-            <div className="aspect-square w-full max-h-[70vh] overflow-hidden rounded-2xl bg-cocoa/10 mb-4">
-              <img
-                src={activePhoto.image}
-                alt={activePhoto.caption}
-                className="h-full w-full object-cover"
-              />
+            {/* Testimonial Note */}
+            <figure className="tp-memories__note" data-reveal="true">
+              <span aria-hidden="true" className="tp-tape tp-tape--center" style={{ '--tape': '#cfe5f6' }} />
+              <blockquote className="font-plush-text">
+                “TeddyPups truly made our dream a reality. They supported us at every step of the import journey. Our Maltipoo arrived healthy, cheerful, and absolutely perfect. Having 24/7 support throughout the process gave us complete peace of mind.”
+              </blockquote>
+              <figcaption className="font-scrawl">Sarah M., Dubai, UAE</figcaption>
+            </figure>
+          </div>
+
+          {/* Full Photowall Grid */}
+          <div className="mt-16 md:mt-20">
+            <ul aria-label="Photos from TeddyPups families" className="tp-wall">
+              {reviewsList.map((item, idx) => {
+                const tapeStyle = TAPE_STYLES[idx % TAPE_STYLES.length];
+                const tilt = item.tilt?.endsWith('deg') ? item.tilt : `${item.tilt || 0}deg`;
+                return (
+                  <li
+                    key={idx}
+                    className="tp-wall__item"
+                    data-reveal="true"
+                    style={{ '--d': `${(idx % 8) * 110}ms` }}
+                  >
+                    <button
+                      type="button"
+                      className="tp-wall__print"
+                      onClick={() => setActivePhotoIdx(idx)}
+                      aria-label={`Open photo ${idx + 1} of ${reviewsList.length}: ${item.caption || ''}`}
+                    >
+                      <span
+                        className="tp-polaroid"
+                        style={{
+                          '--tilt': tilt,
+                          '--tape': item.tape || '#f6d79a',
+                          '--i': idx,
+                        }}
+                      >
+                        {tapeStyle === 'corners' ? (
+                          <>
+                            <span aria-hidden="true" className="tp-tape tp-tape--tl" />
+                            <span aria-hidden="true" className="tp-tape tp-tape--tr" />
+                          </>
+                        ) : (
+                          <span aria-hidden="true" className={`tp-tape tp-tape--${tapeStyle}`} />
+                        )}
+
+                        <span className="tp-polaroid__photo">
+                          <img
+                            src={item.image}
+                            alt={item.alt || 'A happy TeddyPups family with their new puppy'}
+                            loading="lazy"
+                            width="960"
+                            height="1280"
+                            className="size-full object-cover"
+                          />
+                        </span>
+
+                        <span className="tp-polaroid__caption font-scrawl">
+                          {item.caption !== 'Happy TeddyPups Family' ? item.caption : ''}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* Foot with mascot admiring wall */}
+          <div className="tp-memories__foot mt-20 flex justify-center">
+            <div className="pup-buddy w-36 md:w-44" data-facing="left">
+              <PupBuddy facing="left" pose="sit" />
             </div>
-            <p className="font-scrawl text-2xl text-cocoa">{activePhoto.caption}</p>
           </div>
         </div>
-      )}
+      </section>
+
+      {/* Lightbox Photo Viewer Dialog */}
+      <PhotoLightbox
+        photos={reviewsList}
+        currentIndex={activePhotoIdx}
+        onClose={() => setActivePhotoIdx(null)}
+        onNavigate={setActivePhotoIdx}
+      />
     </div>
   );
 }

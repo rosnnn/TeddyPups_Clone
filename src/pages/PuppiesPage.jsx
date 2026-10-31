@@ -3,154 +3,202 @@ import { Link } from 'react-router-dom';
 import PUPPIES from '../data/puppies';
 import PuppyCard from '../components/PuppyCard';
 import PuppyModal from '../components/PuppyModal';
+import PupBuddy from '../components/pup/PupBuddy';
+
+const BREEDS = ['All', 'Maltipoo', 'Pomeranian', 'Poodle', 'Cavapoo', 'Shih Tzu'];
+const GENDERS = ['All', 'Male', 'Female'];
+const ORIGINS = ['All', 'Dubai', 'Imported'];
 
 export default function PuppiesPage() {
   const [selectedPuppy, setSelectedPuppy] = useState(null);
-  const [filterBreed, setFilterBreed] = useState('All');
-  const [videoOnly, setVideoOnly] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const breeds = ['All', 'Maltipoo', 'Poodle', 'Pomeranian', 'Shih Tzu', 'Cavapoo'];
+  const [selectedBreed, setSelectedBreed] = useState('All');
+  const [selectedGender, setSelectedGender] = useState('All');
+  const [selectedOrigin, setSelectedOrigin] = useState('All');
 
   const availablePuppies = PUPPIES.filter((p) => p.status === 'Available');
   const goneHomePuppies = PUPPIES.filter((p) => p.status === 'Gone Home');
 
   const filteredPuppies = availablePuppies.filter((p) => {
-    const matchesBreed =
-      filterBreed === 'All' ||
-      p.breed.toLowerCase().includes(filterBreed.toLowerCase()) ||
-      p.name.toLowerCase().includes(filterBreed.toLowerCase());
-
-    const matchesVideo = !videoOnly || p.hasVideo;
-
-    const matchesSearch =
-      !searchQuery ||
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.breed.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchesBreed && matchesVideo && matchesSearch;
+    if (selectedBreed !== 'All') {
+      const matchBreed = p.breed.toLowerCase().includes(selectedBreed.toLowerCase());
+      if (!matchBreed) return false;
+    }
+    if (selectedGender !== 'All') {
+      const matchGender = p.gender.toLowerCase() === selectedGender.toLowerCase() ||
+        (selectedGender === 'Male' && (p.gender === 'Boy' || p.gender === 'boy')) ||
+        (selectedGender === 'Female' && (p.gender === 'Girl' || p.gender === 'girl'));
+      if (!matchGender) return false;
+    }
+    if (selectedOrigin !== 'All') {
+      const matchOrigin = p.origin?.toLowerCase().includes(selectedOrigin.toLowerCase());
+      if (!matchOrigin) return false;
+    }
+    return true;
   });
 
   return (
-    <div data-page="puppies" className="tp-page pt-12 pb-24">
-      <div className="gutter mx-auto max-w-[110rem]">
-        {/* Header Section */}
-        <header className="mb-10 text-center md:text-left">
-          <p className="font-scrawl text-lg text-toffee-ink">from Teddy's sketchbook</p>
-          <h1 className="font-plush text-giant tp-sketchbook__title text-cocoa mt-2">
-            Available puppies
-          </h1>
-          <p className="tp-sketchbook__lede text-lede mt-4 max-w-[46ch] text-cocoa-soft leading-relaxed">
-            Every listing shows real photos of the actual puppy. Open a profile to see them all, then ask us about them on WhatsApp.
-          </p>
-        </header>
+    <div className="tp-page" data-page="puppies">
+      <div className="tp-sketchbook">
+        <div className="gutter mx-auto max-w-[110rem] pb-24 pt-10 md:pt-16">
+          {/* Sketchbook Header */}
+          <div className="tp-sketchbook__head flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <div className="tp-sketchbook__words max-w-[50ch]">
+              <p className="font-scrawl text-lg text-toffee-ink" data-reveal="true">
+                from Teddy's sketchbook
+              </p>
+              <h1 className="font-plush text-giant tp-sketchbook__title relative inline-block mt-2" data-reveal="true" id="pups-title">
+                Available puppies
+                <svg
+                  aria-hidden="true"
+                  className="tp-sketchbook__underline absolute -bottom-3 left-0 w-full text-toffee"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 400 24"
+                >
+                  <path d="M4 15c40-9 70 5 112-2s70-9 112 0 74 8 116-1 38-4 52 1" />
+                </svg>
+              </h1>
+              <p className="tp-sketchbook__lede text-lede mt-6 text-cocoa-soft" data-reveal="true">
+                Every listing shows real photos of the actual puppy. Open a profile to see them all, then ask us about them on WhatsApp.
+              </p>
+            </div>
 
-        {/* Filter & Search Bar */}
-        <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-4 rounded-3xl bg-milk p-4 shadow-sm border border-honey/40">
-          {/* Breed Chips */}
-          <div className="flex flex-wrap gap-2 items-center">
-            {breeds.map((breed) => (
-              <button
-                key={breed}
-                type="button"
-                onClick={() => setFilterBreed(breed)}
-                className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
-                  filterBreed === breed
-                    ? 'bg-cocoa text-milk shadow-sm scale-105'
-                    : 'bg-honey-soft/40 text-cocoa hover:bg-honey-soft'
-                }`}
-              >
-                {breed}
-              </button>
-            ))}
+            {/* Mascot in Sketchbook */}
+            <div className="tp-sketchbook__self hidden md:block w-36" data-reveal="true">
+              <PupBuddy facing="left" pose="sit" />
+            </div>
           </div>
 
-          {/* Video Toggle & Search Input */}
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            <button
-              type="button"
-              onClick={() => setVideoOnly(!videoOnly)}
-              className={`rounded-full px-4 py-2 text-xs font-semibold border-2 transition ${
-                videoOnly
-                  ? 'bg-toffee border-toffee text-milk'
-                  : 'border-cocoa/20 text-cocoa hover:border-cocoa'
-              }`}
-            >
-              {videoOnly ? '✓ Video Only' : '▶ Has Video'}
-            </button>
+          {/* Filter Bar Chips */}
+          <div className="mt-12 flex flex-col gap-5 border-y border-[var(--color-toffee)]/20 py-6">
+            {/* Breed chips */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-scrawl text-sm text-[var(--ink-soft)] mr-2">Breed:</span>
+              {BREEDS.map((breed) => (
+                <button
+                  key={breed}
+                  type="button"
+                  onClick={() => setSelectedBreed(breed)}
+                  className={`chip h-9 px-4 rounded-full text-sm font-medium transition-colors ${
+                    selectedBreed === breed
+                      ? '!bg-[var(--color-toffee)] !text-white'
+                      : 'bg-white hover:bg-[var(--color-creme)] text-[var(--ink)]'
+                  }`}
+                >
+                  {breed}
+                </button>
+              ))}
+            </div>
 
-            <input
-              type="text"
-              placeholder="Search puppy by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="rounded-full border border-cocoa/20 bg-milk px-4 py-2 text-sm text-cocoa placeholder:text-cocoa/40 focus:border-toffee focus:outline-none w-full sm:w-56"
-            />
+            {/* Gender & Origin chips */}
+            <div className="flex flex-wrap items-center gap-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-scrawl text-sm text-[var(--ink-soft)] mr-2">Gender:</span>
+                {GENDERS.map((g) => (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => setSelectedGender(g)}
+                    className={`chip h-8 px-3 rounded-full text-xs font-medium transition-colors ${
+                      selectedGender === g
+                        ? '!bg-[var(--color-toffee)] !text-white'
+                        : 'bg-white hover:bg-[var(--color-creme)] text-[var(--ink)]'
+                    }`}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-scrawl text-sm text-[var(--ink-soft)] mr-2">Location:</span>
+                {ORIGINS.map((o) => (
+                  <button
+                    key={o}
+                    type="button"
+                    onClick={() => setSelectedOrigin(o)}
+                    className={`chip h-8 px-3 rounded-full text-xs font-medium transition-colors ${
+                      selectedOrigin === o
+                        ? '!bg-[var(--color-toffee)] !text-white'
+                        : 'bg-white hover:bg-[var(--color-creme)] text-[var(--ink)]'
+                    }`}
+                  >
+                    {o}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Available Puppies Grid */}
+          <div className="mt-14">
+            {filteredPuppies.length === 0 ? (
+              <div className="py-20 text-center">
+                <p className="font-plush text-2xl text-[var(--ink)]">No puppies match this filter</p>
+                <p className="font-scrawl text-lg text-[var(--ink-soft)] mt-2">
+                  Try selecting a different breed or reset filters.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-primary mt-6"
+                  onClick={() => {
+                    setSelectedBreed('All');
+                    setSelectedGender('All');
+                    setSelectedOrigin('All');
+                  }}
+                >
+                  Reset filters
+                </button>
+              </div>
+            ) : (
+              <ul aria-label="Available puppies" className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredPuppies.map((puppy, i) => (
+                  <li key={puppy.id || i}>
+                    <PuppyCard
+                      puppy={puppy}
+                      onSelect={(p) => setSelectedPuppy(p)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
 
-        {/* Puppies Grid */}
-        {filteredPuppies.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {filteredPuppies.map((puppy) => (
-              <PuppyCard
-                key={puppy.slug}
-                puppy={puppy}
-                onSelect={(p) => setSelectedPuppy(p)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-3xl bg-milk/60 p-12 text-center border-2 border-dashed border-cocoa/20">
-            <p className="font-plush text-2xl text-cocoa">No puppies found matching criteria</p>
-            <p className="text-cocoa-soft mt-2 text-sm">
-              Try selecting another breed or reset your search filters.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setFilterBreed('All');
-                setVideoOnly(false);
-                setSearchQuery('');
-              }}
-              className="btn btn-primary mt-6"
-            >
-              Reset Filters
-            </button>
-          </div>
-        )}
-
-        {/* SECTION: ALREADY GONE HOME TEASER */}
-        <section className="mt-28 border-t-2 border-honey/40 pt-16">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-8">
-            <div>
-              <h2 className="font-plush text-big text-cocoa">Already gone home</h2>
-              <p className="mt-2 text-cocoa-soft text-base">
-                These puppies have found their loving families across the UAE.
+        {/* Section: Already Gone Home Strip */}
+        <div className="tp-gone-strip mt-20 border-t border-[var(--color-toffee)]/20 py-16 bg-[var(--color-creme)]/40">
+          <div className="gutter mx-auto flex max-w-[110rem] flex-col gap-10 md:flex-row md:items-center">
+            <div className="md:w-1/3" data-reveal="true">
+              <h2 className="font-plush text-big" id="gone-title">
+                Already gone home
+              </h2>
+              <p className="mt-3 text-cocoa-soft text-lede">
+                These precious puppies have found their forever families across Dubai and worldwide.
               </p>
+              <Link className="btn btn-primary mt-6 inline-block" to="/gone-home">
+                See the puppies who've gone home
+              </Link>
             </div>
-            <Link className="btn btn-primary" to="/gone-home">
-              See the puppies who've gone home
-            </Link>
-          </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-            {goneHomePuppies.slice(0, 5).map((puppy) => (
-              <PuppyCard
-                key={puppy.slug}
-                puppy={puppy}
-                isSmall={true}
-                onSelect={(p) => setSelectedPuppy(p)}
-              />
-            ))}
+            <ul aria-label="Some puppies who have gone home" className="tp-gone-strip__row flex-1 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {goneHomePuppies.slice(0, 3).map((puppy, i) => (
+                <li key={puppy.id || i}>
+                  <PuppyCard
+                    puppy={puppy}
+                    isSmall
+                    onSelect={(p) => setSelectedPuppy(p)}
+                  />
+                </li>
+              ))}
+            </ul>
           </div>
-        </section>
+        </div>
       </div>
 
-      {/* Detail Modal */}
-      {selectedPuppy && (
-        <PuppyModal puppy={selectedPuppy} onClose={() => setSelectedPuppy(null)} />
-      )}
+      {/* Puppy Detail Modal Lightbox */}
+      <PuppyModal
+        puppy={selectedPuppy}
+        onClose={() => setSelectedPuppy(null)}
+      />
     </div>
   );
 }
