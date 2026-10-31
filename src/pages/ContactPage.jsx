@@ -75,7 +75,7 @@ export default function ContactPage() {
                   href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I'd%20like%20to%20schedule%20a%20visit%20to%20your%20Downtown%20Dubai%20showroom."
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-whatsapp w-full block text-center py-3.5 text-base"
+                  className="btn btn-whatsapp w-full flex justify-center text-base"
                 >
                   Message on WhatsApp
                 </a>
@@ -193,7 +193,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="pt-2">
-                    <button type="submit" className="btn btn-primary w-full py-4 text-lg">
+                    <button type="submit" className="btn btn-primary w-full flex justify-center text-lg">
                       Send Letter &amp; Request Visit
                     </button>
                   </div>

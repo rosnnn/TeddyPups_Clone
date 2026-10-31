@@ -150,7 +150,7 @@ export default function Header() {
             <div className="space-y-3 pt-4 border-t border-cocoa/10">
               <a
                 href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I'd%20love%20to%20know%20more%20about%20your%20puppies."
-                className="btn btn-whatsapp w-full py-3.5 text-center block text-base"
+                className="btn btn-whatsapp w-full flex justify-center text-base"
                 target="_blank"
                 rel="noopener noreferrer"
               >

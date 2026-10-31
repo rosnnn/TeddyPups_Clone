@@ -86,7 +86,7 @@ export default function FAQPage() {
             href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I%20have%20a%20question%20about%20your%20puppies."
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-whatsapp mt-6 inline-block px-8 py-3.5 text-base"
+            className="btn btn-whatsapp mt-6"
           >
             Chat with us on WhatsApp
           </a>

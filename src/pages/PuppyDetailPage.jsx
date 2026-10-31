@@ -17,7 +17,7 @@ export default function PuppyDetailPage() {
       <div className="gutter mx-auto max-w-xl py-24 text-center">
         <h1 className="font-plush text-4xl text-cocoa">Puppy not found</h1>
         <p className="text-cocoa-soft mt-3">We couldn't find the puppy listing you were looking for.</p>
-        <Link to="/puppies" className="btn btn-primary mt-6 inline-block">
+        <Link to="/puppies" className="btn btn-primary mt-6">
           View all available puppies
         </Link>
       </div>
@@ -149,7 +149,7 @@ export default function PuppyDetailPage() {
                   href={`https://wa.me/971541676733?text=${waMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-whatsapp w-full block text-center py-3 text-sm mt-4"
+                  className="btn btn-whatsapp w-full flex justify-center text-sm mt-4"
                 >
                   Adopt on WhatsApp
                 </a>
@@ -237,11 +237,11 @@ export default function PuppyDetailPage() {
                   href={`https://wa.me/971541676733?text=${waMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-whatsapp py-3.5 px-8 text-base"
+                  className="btn btn-whatsapp"
                 >
                   💬 Enquire on WhatsApp Now
                 </a>
-                <Link to="/contact" className="btn btn-primary py-3.5 px-8 text-base">
+                <Link to="/contact" className="btn btn-primary">
                   Schedule Showroom Visit
                 </Link>
               </div>

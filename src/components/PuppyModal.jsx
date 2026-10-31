@@ -142,7 +142,7 @@ export default function PuppyModal({ puppy, onClose }) {
                     href={`https://wa.me/971541676733?text=${waMessage}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-whatsapp w-full py-3.5 text-center text-base font-semibold shadow-lg hover:shadow-xl transition block"
+                    className="btn btn-whatsapp w-full flex justify-center text-base"
                   >
                     💬 Ask About {puppy.name} on WhatsApp
                   </a>

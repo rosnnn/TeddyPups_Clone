@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PupStop from './pup/PupStop';
 
 export default function Footer() {
   const exploreLinks = [
@@ -65,31 +66,15 @@ export default function Footer() {
               <path className="tp-basket__rim" d="M116 145 A96 12 0 0 1 308 145"></path>
             </svg>
 
-            <div className="pup-stop tp-basket__pup" data-act="basket" data-behind="true" data-facing="right">
-              <div className="pup-buddy" data-facing="right">
-                <svg aria-label="Teddy, sitting snug in his basket" role="img" style={{ overflow: 'visible' }} viewBox="0 0 300 240">
-                  <g>
-                    <g transform="translate(0 9)">
-                      <path d="M178 146 Q212 162 246 146 L246 154 Q212 170 178 154 Z" fill="#a24a1a" stroke="#2a170e" strokeWidth="3"></path>
-                      <path d="M212 160 C212 156 206 155 206 159.4 C206 163 212 166.6 212 168.4 C212 166.6 218 163 218 159.4 C218 155 212 156 212 160 Z" fill="#fbe3b4" stroke="#2a170e" strokeWidth="2.4"></path>
-                      <circle cx="212" cy="100" r="48" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4"></circle>
-                      <circle cx="170" cy="80" r="18" fill="#e4a352" stroke="#2a170e" strokeWidth="3.4"></circle>
-                      <circle cx="254" cy="80" r="18" fill="#e4a352" stroke="#2a170e" strokeWidth="3.4"></circle>
-                      <ellipse cx="196" cy="98" rx="6" ry="7" fill="#2a170e"></ellipse>
-                      <ellipse cx="228" cy="98" rx="6" ry="7" fill="#2a170e"></ellipse>
-                      <circle cx="198" cy="96" r="2" fill="#fff"></circle>
-                      <circle cx="230" cy="96" r="2" fill="#fff"></circle>
-                      <circle cx="182" cy="112" r="6" fill="#f9b9a6" opacity="0.8"></circle>
-                      <circle cx="242" cy="112" r="6" fill="#f9b9a6" opacity="0.8"></circle>
-                      <ellipse cx="212" cy="114" rx="7" ry="5" fill="#2a170e"></ellipse>
-                    </g>
-                    <g>
-                      <path d="M175 159 C175 148 181 142 190 142 C199 142 205 148 205 159 Z M219 159 C219 148 225 142 234 142 C243 142 249 148 249 159 Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4"></path>
-                    </g>
-                  </g>
-                </svg>
-              </div>
-            </div>
+            <PupStop
+              pose="snug"
+              facing="right"
+              act="basket"
+              behind={true}
+              lane={true}
+              className="tp-basket__pup"
+              label="Teddy, sitting snug in his basket"
+            />
 
             <svg aria-hidden="true" className="tp-basket__front" viewBox="0 0 300 240">
               <path className="tp-basket__body" d="M116 145 C118 180 126 214 138 232 L286 232 C298 214 306 180 308 145 A96 12 0 0 1 116 145 Z"></path>

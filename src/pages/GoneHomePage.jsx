@@ -70,11 +70,11 @@ export default function GoneHomePage() {
               href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I'm%20looking%20for%20a%20puppy%20similar%20to%20one%20of%20the%20puppies%20who%20went%20home."
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-whatsapp px-8 py-3.5 text-base"
+              className="btn btn-whatsapp"
             >
               Ask on WhatsApp
             </a>
-            <Link to="/puppies" className="btn btn-primary px-8 py-3.5 text-base">
+            <Link to="/puppies" className="btn btn-primary">
               Browse Available Puppies
             </Link>
           </div>

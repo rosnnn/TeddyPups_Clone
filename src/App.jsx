@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import IntroCurtain from './components/IntroCurtain';
 import ScrollToTop from './components/ScrollToTop';
+import PawTrailCanvas from './components/PawTrailCanvas';
 
 import HomePage from './pages/HomePage';
 import PuppiesPage from './pages/PuppiesPage';
@@ -49,6 +50,9 @@ export default function App() {
 
       {/* Global Starry Sky Footer */}
       <Footer />
+
+      {/* Interactive Paw Trail Cursor Effect Canvas */}
+      <PawTrailCanvas />
     </BrowserRouter>
   );
 }
