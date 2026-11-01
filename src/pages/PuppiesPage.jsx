@@ -8,8 +8,8 @@ import PUPPIES_FULL from '../data/puppies';
 
 const BREEDS_LIST = [
   { slug: 'maltipoo', name: 'Maltipoo' },
-  { slug: 'poodle', name: 'Poodle' },
   { slug: 'pomeranian', name: 'Pomeranian' },
+  { slug: 'poodle', name: 'Poodle' },
   { slug: 'cavapoo', name: 'Cavapoo' },
   { slug: 'shih-tzu', name: 'Shih Tzu' },
 ];
@@ -106,14 +106,6 @@ export default function PuppiesPage() {
                   className="tp-sticker-chip"
                 >
                   Everywhere
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFilter('origin', 'local')}
-                  aria-pressed={origin === 'local'}
-                  className="tp-sticker-chip"
-                >
-                  In Dubai
                 </button>
                 <button
                   type="button"
