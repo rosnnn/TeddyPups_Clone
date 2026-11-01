@@ -53,9 +53,9 @@ export default function PuppiesPage() {
   const hasFilters = Boolean(origin || breed || gender || collection);
 
   const handlePuppyClick = (pup) => {
-    // Find rich puppy object for modal
-    const full = PUPPIES_FULL.find((item) => item.slug === pup.slug) || pup;
-    setSelectedPuppy(full);
+    // Find rich puppy object for modal, preserving wash, SVGs, and rich metadata
+    const full = PUPPIES_FULL.find((item) => item.slug === pup.slug) || {};
+    setSelectedPuppy({ ...full, ...pup });
   };
 
   return (
