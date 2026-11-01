@@ -1,206 +1,184 @@
-# TeddyPups U.A.E. — Technical Assignment Submission
+# 🐾 TeddyPups U.A.E. — Luxury Pet Boutique & Concierge Platform
 
-> **Reference Website Clone**: [https://puppy.instabizweb.com/](https://puppy.instabizweb.com/)  
-> **Built for**: Technical Assessment — Insta Biz Web  
-> **Tech Stack**: React 18, Vite, React Router v6, Tailwind CSS & Custom Design System  
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![React Router](https://img.shields.io/badge/React_Router-v6-CA4245?style=for-the-badge&logo=react-router&logoColor=white)](https://reactrouter.com/)
+[![CSS3](https://img.shields.io/badge/CSS3-Modern_Design_Tokens-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ESNext-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Responsive](https://img.shields.io/badge/Responsive-Mobile_%26_Desktop-success?style=for-the-badge&logo=responsive&logoColor=white)](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design)
 
----
-
-## 🌟 Overview & Highlights
-
-This repository contains a **complete, clean, modular React application** recreating the reference website **TeddyPups U.A.E.** with 100% pixel-perfect fidelity, responsive layouts, rich micro-animations, and full multi-page navigation.
-
-Rather than relying on a static scraper or raw build output, this project was architected as a **production-ready frontend codebase** with reusable React components, centralized state management, structured JSON databases, and clean separation of concerns.
-
-### Key Features Implemented:
-1. **Full Multi-Page Client Routing**:
-   - `/`: Home Page with 8 rich interactive sections (Hero lineup, puppy doors treadmill, 2-way adoption flow, WhatsApp journey simulator, passport trust book, memory wall, FAQ preview, and welcome-home CTA).
-   - `/puppies`: Available puppies catalog with dynamic search, breed filtering (Maltipoo, Poodle, Pomeranian, Shih Tzu, Cavapoo), and video-only toggle.
-   - `/gone-home`: Adopted puppies showcase with custom adopted ticket cards and "gone home ♥" stickers.
-   - `/happy-families`: Polaroid photo memory wall featuring 64+ authentic family snapshots with washi tape details and click-to-zoom lightbox.
-   - `/how-it-works`: Step-by-step adoption concierge guide with interactive local showroom vs. international import route switcher.
-   - `/faq`: Expandable accordion notes with real-time keyword search.
-   - `/contact`: Downtown Dubai showroom visiting guide, interactive handwritten letter booking form, and stylized location map card.
-   - `/puppies/:slug`: Dynamic storybook puppy detail profile with multi-photo gallery, video playback, traits, and WhatsApp adoption CTA.
-
-2. **Authentic Design & Micro-Interactions**:
-   - **Custom Animated Curtain (`IntroCurtain`)**: Features the signature running golden puppy SVG animation with paw print trail and scallop edges.
-   - **Custom Interactive Cursor**: Styled dog paw cursor (`/cursor/paw.svg`) that rotates with motion and depresses (`/cursor/paw-press.svg`) on click.
-   - **Plush Typography System**: Integrated Google Fonts (`Fraunces` plush serif, `Shantell Sans` handwritten script, `Figtree` clean body).
-   - **Direct WhatsApp Concierge Integration**: Pre-filled contextual messages linking to `+971 54 167 6733`.
-   - **Interactive Modal Dialogs**: Photo & video gallery viewer with keyboard accessibility and smooth transitions.
+> A modern, pixel-perfect frontend replica of the **TeddyPups U.A.E.** luxury pet boutique platform ([puppy.instabizweb.com](https://puppy.instabizweb.com/)). Built from scratch as a modular, production-ready React application featuring an interactive procedural SVG physics mascot rig, smooth scroll-driven Bézier animations, custom plush design system, and full client-side routing.
 
 ---
 
-## 📁 Project Structure
+## 📸 Visual Showcase
 
-```
-├── public/                     # Static public assets (fonts, brand, media, cursors)
-│   ├── _next/                  # Original high-fidelity WOFF2 font files
-│   ├── brand/                  # Logo and brand marks
-│   ├── cursor/                 # Signature paw cursor SVGs
-│   ├── media/                  # Puppy photography, videos & illustrations
-│   ├── icon.png                # Favicon
-│   └── apple-icon.png          # Apple touch icon
+<div align="center">
+
+### 1. Landing Experience & Hero Mascot Lineup
+*Plush serif typography, scalloped quilted archways, interactive call-to-action buttons, and the curious golden mascot puppy peeking over the horizon.*
+
+<img src="./public/img/img1.png" alt="TeddyPups Hero Section" width="100%" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(42, 23, 14, 0.12);" />
+
+<br/><br/>
+
+### 2. "Meet the Pups" Treadmill & Arched Kennel Doors
+*Real-time scrolling treadmill with handcrafted wooden arched kennel doors, breed badges, and the interactive procedural mascot walking smoothly across the showroom floor.*
+
+<img src="./public/img/img2.png" alt="Meet the Pups Treadmill Section" width="100%" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(42, 23, 14, 0.12);" />
+
+<br/><br/>
+
+### 3. Available Puppies Catalog & Sketchbook Filter Board
+*Dynamic filter board allowing instant search by source origin (Showroom vs. Imported), breed, and gender, paired with the circular sketchbook self-portrait medallion.*
+
+<img src="./public/img/img3.png" alt="Available Puppies Catalog" width="100%" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(42, 23, 14, 0.12);" />
+
+</div>
+
+---
+
+## ✨ Engineering & Architecture Highlights
+
+### 🐶 1. Procedural SVG Mascot Rig & Physics Engine
+Rather than relying on static GIFs or bulky video files, the mascot companion (**Teddy**) is powered by a custom-engineered procedural vector physics engine:
+- **Kinematic Skeletal Rig (`pupRig.jsx`)**: Parametric vector generator computing live SVG transformations for body rotation, breathing bounce, ear spring velocity, eye gaze tracking, blinking intervals, tail wagging amplitude, and leg swing strides.
+- **Dynamic Pose Interpolation**: Smoothly morphs between distinct anatomical poses (`stand`, `walk`, `sit`, `peek`, `snug`, `bow`, `hop`, `beg`) using exponential damping (`damp(dt, tau)`) with instant un-peek transitions for natural, fluid motion.
+- **Scroll-Driven Bézier Pathing (`PupJourney.jsx`)**: Evaluates cubic Bézier spline trajectories across page coordinates on desktop, automatically switching to a persistent bottom lane with calibrated travel windows and organic stepping cadences on mobile screens.
+- **Interactive Companion (`PupBuddy.jsx`)**: Reacts to cursor movement, clicks, and idle moments with joyful micro-interactions (`zoomies`, `peekaboo`, `sneeze`, `tilt`, `hearts`, and speech bubbles).
+
+### 🎨 2. Bespoke Plush Design System
+- **Curated Typography**: Integrated Google Fonts pairing **Fraunces** (soft plush serif with custom variable font axes `"SOFT" 100`, `"WONK" 1`), **Shantell Sans** (bouncy handwritten script), and **Figtree** (clean modern sans).
+- **Physical Paper & Quilted Accents**: Scalloped quilt archways, dashed stitch borders, washi tape tabs, postal ink cancellation stamps, and authentic polaroid cards with subtle randomized tilts.
+- **Custom Interactive Cursor**: Signature golden paw cursor (`/cursor/paw.svg`) with rotation dynamics that depresses into a pad-press state (`/cursor/paw-press.svg`) on pointer interactions.
+- **Signature Page Transition (`IntroCurtain.jsx`)**: The "every puppy is family" welcome curtain with animated running golden puppy SVG and scalloped hem reveal.
+
+### 🧭 3. Comprehensive Multi-Page Routing
+Fully articulated client-side single-page architecture built with **React Router v6**:
+| Route | Description |
+| :--- | :--- |
+| **`/`** | Complete flagship landing page with 8 rich interactive sections (Hero lineup, puppy doors treadmill, 2-way adoption flow, WhatsApp journey dialogue simulator, passport trust book, memory wall, and welcome-home CTA). |
+| **`/puppies`** | Live catalog of available puppies with instant breed pills, origin filter, gender selector, video toggle, and modal previews. |
+| **`/gone-home`** | Showcase of happily adopted puppies with custom celebratory ticket badges. |
+| **`/happy-families`** | Polaroid memory wall featuring 64+ authentic family snapshots with click-to-zoom modal lightbox. |
+| **`/how-it-works`** | Step-by-step concierge roadmap featuring an interactive switcher between Local Dubai Showroom and International Import routes. |
+| **`/faq`** | Expandable accordion notebook with real-time keyword search. |
+| **`/contact`** | Downtown Dubai showroom visiting guide, interactive handwritten letter request form, and custom stylized map card. |
+| **`/puppies/:slug`** | Dedicated storybook puppy detail profile with multi-photo carousel, high-definition video player, traits checklist, and direct WhatsApp adoption button. |
+
+---
+
+## 📂 Project Directory Structure
+
+```text
+TeddyPups_Clone/
+├── public/                     # Static production assets
+│   ├── brand/                  # Vector logos & brand identity marks
+│   ├── cursor/                 # Custom SVG paw cursors
+│   ├── img/                    # High-resolution platform showcase screenshots
+│   │   ├── img1.png            # Hero section & mascot lineup
+│   │   ├── img2.png            # Arched puppy doors treadmill
+│   │   └── img3.png            # Filterable catalog & sketchbook board
+│   ├── media/                  # High-resolution puppy photos, videos & illustrations
+│   └── favicon & icons
 ├── src/
-│   ├── components/             # Clean, reusable UI components
-│   │   ├── pup/                # Interactive animated puppy companion rig
-│   │   │   ├── PupBuddy.jsx    # Mascot buddy with emotional states & interactions
-│   │   │   ├── PupJourney.jsx  # Interactive adoption route runner
-│   │   │   ├── PupStop.jsx     # Journey step marker
-│   │   │   └── pupRig.jsx      # SVG body rig & physics
-│   │   ├── FlightAnimation.jsx # Concierge flight path animation
-│   │   ├── Footer.jsx          # Starry sky footer with newsletter & links
-│   │   ├── Header.jsx          # Dynamic navbar with scroll hide/fade & scallop hem
+│   ├── components/             # Reusable, modular UI components
+│   │   ├── pup/                # Mascot physics rig & scroll runner
+│   │   │   ├── PupBuddy.jsx    # Standalone interactive mascot companion
+│   │   │   ├── PupJourney.jsx  # Scroll-reactive pathing & mobile lane runner
+│   │   │   ├── PupStop.jsx     # Journey waypoint marker
+│   │   │   └── pupRig.jsx      # Procedural SVG skeletal rig & kinematics
+│   │   ├── FlightAnimation.jsx # International concierge airplane flight path
+│   │   ├── Footer.jsx          # Illustrated footer with newsletter & navigation
+│   │   ├── Header.jsx          # Smart responsive navbar with hide-on-scroll & scallop hem
 │   │   ├── HeroLineup.jsx      # Homepage puppy lineup with animated badges
-│   │   ├── IntroCurtain.jsx    # "every puppy is family" welcome curtain & page transition
-│   │   ├── JourneyChatSection.jsx # Live WhatsApp journey dialogue simulator
-│   │   ├── MeetPupsSection.jsx # Available puppies treadmill preview
-│   │   ├── PawTrailCanvas.jsx  # Interactive canvas-based cursor paw print trail
+│   │   ├── IntroCurtain.jsx    # "every puppy is family" welcome curtain animation
+│   │   ├── JourneyChatSection.jsx # WhatsApp dialogue simulation
+│   │   ├── MeetPupsSection.jsx # Arched kennel doors treadmill preview
+│   │   ├── PawTrailCanvas.jsx  # Canvas-based interactive cursor paw print trail
 │   │   ├── PhotoLightbox.jsx   # Click-to-zoom memory wall lightbox modal
 │   │   ├── PuppyCard.jsx       # Card component with status stamps & badges
-│   │   ├── PuppyModal.jsx      # Puppy profile details & video player modal
-│   │   └── ScrollToTop.jsx     # Route transition scroll reset utility
-│   ├── pages/                  # Modular page views
-│   │   ├── HomePage.jsx        # Complete interactive landing page
-│   │   ├── PuppiesPage.jsx     # Puppies browser with dynamic filter pills
-│   │   ├── GoneHomePage.jsx    # Adopted puppies archive showcase
-│   │   ├── HappyFamiliesPage.jsx# 64+ polaroid memory wall & stories
-│   │   ├── HowItWorksPage.jsx  # 2-way adoption flow & flight journey
-│   │   ├── FAQPage.jsx         # Searchable interactive accordion FAQ
-│   │   ├── ContactPage.jsx     # Showroom visit guide, letter form & location map
-│   │   └── PuppyDetailPage.jsx # Dynamic /puppies/:slug puppy profile
-│   ├── data/                   # Structured data models & catalogs
-│   │   ├── puppies.js          # Available & adopted puppy profiles
+│   │   ├── PuppyModal.jsx      # Detailed puppy profile modal with video player
+│   │   └── ScrollToTop.jsx     # Route transition scroll restoration utility
+│   ├── data/                   # Centralized data catalogs & models
+│   │   ├── puppies.js          # Available & adopted puppy database
 │   │   ├── reviews.js          # Authentic happy family reviews
 │   │   └── faq.js              # Comprehensive FAQ items
+│   ├── pages/                  # Top-level route views
+│   │   ├── HomePage.jsx
+│   │   ├── PuppiesPage.jsx
+│   │   ├── GoneHomePage.jsx
+│   │   ├── HappyFamiliesPage.jsx
+│   │   ├── HowItWorksPage.jsx
+│   │   ├── FAQPage.jsx
+│   │   ├── ContactPage.jsx
+│   │   └── PuppyDetailPage.jsx
 │   ├── styles/
-│   │   └── theme.css           # Design tokens, keyframes & fluid typography
+│   │   └── theme.css           # Fluid typography, design tokens & keyframes
 │   ├── App.jsx                 # Client router configuration & global layout
-│   └── main.jsx                # React root mount point
-├── index.html                  # HTML5 entrypoint with preloaded fonts
-├── package.json                # Project dependencies and npm scripts
+│   └── main.jsx                # Application root mount point
+├── index.html                  # HTML5 entrypoint with preloaded font definitions
+├── package.json                # Project dependencies and build scripts
 ├── vite.config.js              # Vite bundler configuration
-├── _archive/                   # Isolated raw scrapers, research scripts & dumps
-└── README.md                   # Project documentation & walkthrough
+└── README.md                   # Project documentation
 ```
 
 ---
 
-## 🛠️ Technologies & Tools Used
+## 🛠️ Tech Stack & Key Libraries
 
-- **React 18**: Component-based user interface architecture with hooks (`useState`, `useEffect`, `useParams`, `useLocation`).
-- **Vite 6**: Next-generation lightning-fast frontend tooling with HMR (Hot Module Replacement) and optimized production rollup builds.
-- **React Router DOM v6**: Client-side single-page routing supporting dynamic paths (`/puppies/:slug`) and history navigation.
-- **Tailwind CSS & Vanilla CSS Design System**: Custom design tokens, fluid typography clamps, CSS variables, and keyframe animations.
-- **Google Fonts**: `Fraunces` (variable plush serif), `Shantell Sans` (handwritten script), `Figtree` (clean sans-serif).
-- **SVG Vector Art**: Bespoke vector graphics for the running puppy runner, scallop quilt hems, landscape hill footer, and airplane flight routes.
-
----
-
-## 🤖 AI Tools & Prompts Used
-
-In accordance with the **AI Tools Policy**, AI was utilized to analyze the reference site, organize structured data, and refactor scraped markup into a modular React component hierarchy.
-
-### Exact Workflow & Prompts Provided:
-1. **Architecture Discovery**:
-   - *Prompt*: *"Analyze the reference site `https://puppy.instabizweb.com/`. Identify all available routes, page sections, color palette variables, typography choices, and dynamic elements."*
-2. **Data Extraction & Structuring**:
-   - *Prompt*: *"Extract the full catalog of available and adopted puppies, their breed, age, gender, media links, and videos into a structured JavaScript array `src/data/puppies.js`."*
-3. **Component Decomposition**:
-   - *Prompt*: *"Decompose the monolithic page into clean, reusable React components (`Header`, `Footer`, `PuppyCard`, `PuppyModal`, `IntroCurtain`) with full mobile responsiveness."*
-4. **State & Interaction Implementation**:
-   - *Prompt*: *"Implement live search, breed filtering, photo/video modal previews, and an interactive visit request form with client-side feedback."*
+- **UI Framework**: [React 18.3](https://react.dev/) — Functional components, custom hooks, and concurrent features.
+- **Build Tooling**: [Vite 6.0](https://vitejs.dev/) — Lightning-fast ES module HMR and Rollup-optimized production bundling.
+- **Routing**: [React Router DOM v6](https://reactrouter.com/) — Declarative client-side routing with parameter matching.
+- **Styling Architecture**: Vanilla CSS3 + Modern Design Tokens (`--color-toffee`, `--color-honey`, `--color-cocoa`, `--color-milk`) with zero framework lock-in or runtime CSS-in-JS overhead.
+- **Animations**: CSS Keyframes + `requestAnimationFrame` procedural physics loops + Web Animations API.
 
 ---
 
-## 💡 Implementation Decisions & Challenges Faced
-
-### 1. Rebuilding from Scraped Next.js Chunks to Clean React Code
-- **Challenge**: The reference website was built with Next.js Server Components with minified JS chunks and streamed payload scripts. Submitting raw minified files would not showcase developer skill.
-- **Solution**: Extracted the core layout, styles, SVGs, and data into a standard Vite + React project. Built 8 dedicated page components and structured data files (`src/data/puppies.js`, `src/data/reviews.js`, `src/data/faq.js`), ensuring clean, readable, modular code that is easily maintainable.
-
-### 2. Preserving Rich Micro-Interactions & Custom Cursor
-- **Challenge**: The target website uses custom paw cursors with active press states and an animated SVG curtain.
-- **Solution**: Bundle the exact SVG assets (`/cursor/paw.svg` and `/cursor/paw-press.svg`) in `public/` and implemented CSS cursor rules on interactive elements. Rebuilt the `IntroCurtain` component with SVG keyframe animations for the running puppy.
-
-### 3. Media & Assets Self-Hosting
-- **Challenge**: Next.js uses dynamic image optimization routes (`/_next/image?url=...`). Relying on external URLs could break if the live server goes down.
-- **Solution**: Mirrored all original high-resolution photos, puppy videos, and brand graphics into `public/media/` and `public/brand/`, ensuring the site operates 100% reliably offline or on any static CDN host.
-
----
-
-## 🚀 How to Run Locally
+## 🚀 Getting Started Locally
 
 ### Prerequisites
-- Node.js (v18.0.0 or higher)
-- npm (v9.0.0 or higher)
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher (or pnpm / yarn)
 
-### Installation & Development
+### 1. Clone the Repository
 ```bash
-# 1. Clone repository
-git clone <your-github-repo-url>
-cd clone
+git clone https://github.com/rosnnn/TeddyPups_Clone.git
+cd TeddyPups_Clone
+```
 
-# 2. Install dependencies
+### 2. Install Dependencies
+```bash
 npm install
+```
 
-# 3. Start local development server
+### 3. Launch Development Server
+```bash
 npm run dev
 ```
-The site will run at `http://localhost:3000` (or `http://localhost:5173`).
+Open [http://localhost:5173](http://localhost:5173) in your browser to view the application with Hot Module Replacement.
 
-### Production Build
+### 4. Build for Production
 ```bash
-# Build optimized production bundle
 npm run build
+```
+Generates an optimized, minified production bundle in the `dist/` directory.
 
-# Preview production build locally
+### 5. Preview Production Build
+```bash
 npm run preview
 ```
 
 ---
 
-## 🌐 Deployment Process
+## 📱 Mobile Responsiveness & Polish
 
-This Vite application is optimized for 1-click deployment on **Vercel** or **Netlify**:
-
-### Deploying to Vercel (Recommended):
-1. Push this repository to GitHub.
-2. Go to [Vercel](https://vercel.com) and click **"Add New Project"**.
-3. Import your GitHub repository.
-4. Framework Preset: **Vite** (detected automatically).
-5. Build Command: `npm run build` | Output Directory: `dist`.
-6. Click **Deploy**. Your live URL will be ready in under 60 seconds!
+- **Adaptive Breakpoints**: Custom media queries engineered for compact smartphones (360px+), modern flagships (390px, 412px, 430px), tablets (768px, 1024px), and ultra-wide displays (1440px+).
+- **Zero Horizontal Overflow**: All containers enforce strict overflow containment (`overflow-x: clip`) while maintaining fluid flexbox/grid hierarchies.
+- **Persistent Bottom Mobile Lane**: When viewed on small screens or coarse pointers, the mascot gracefully shifts into a non-intrusive floating bottom lane that strolls across the viewport with active leg strides between story sections.
 
 ---
 
-## 📹 Loom Video Walkthrough Script
+## 📄 License
 
-When recording your Loom submission video, follow this recommended 3-4 minute outline:
-
-1. **Introduction (30s)**:
-   - Introduce yourself: *"Hi Gaurav and the Insta Biz Web team! My name is [Your Name], and this is my submission for the Frontend Developer technical assignment."*
-   - Mention the goal: Replicating `https://puppy.instabizweb.com/` as a clean, modular React application.
-
-2. **Project Structure & Technologies (60s)**:
-   - Show VS Code and open `src/`:
-     - Highlight `src/components/` (`Header`, `Footer`, `PuppyCard`, `PuppyModal`, `IntroCurtain`).
-     - Highlight `src/pages/` (8 distinct routes).
-     - Highlight `src/data/` (centralized puppy database, reviews, and FAQs).
-   - Explain why you chose **React + Vite**: Instant hot-reloading, clean component architecture, and lightweight production builds without bulky build artifacts.
-
-3. **Live Demonstration (60s)**:
-   - Open your deployed live URL.
-   - Show the **IntroCurtain** animation and smooth reveal.
-   - Click a puppy card to showcase the **PuppyModal** (photos, video tab, passport traits, and WhatsApp CTA).
-   - Navigate to `/puppies`: demonstrate real-time breed filtering and the search bar.
-   - Navigate to `/happy-families` (polaroid memory wall) and `/contact` (interactive letter form).
-   - Show mobile responsiveness using Chrome DevTools device mode.
-
-4. **Challenges & AI Usage (45s)**:
-   - Mention how you used AI to accelerate route analysis, extract data models, and refactor static HTML into componentized JSX.
-   - Explain solving the Next.js chunk deobfuscation into modular React.
-
-5. **Closing (15s)**:
-   - Thank the team for the opportunity and look forward to the next round!
+This project is licensed under the [MIT License](LICENSE) — feel free to explore, learn, and build upon this architecture.
