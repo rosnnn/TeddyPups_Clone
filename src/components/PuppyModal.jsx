@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import PUPPIES_MEDIA_MAP from '../data/puppiesMediaMap.json';
 import PuppyGallery from './PuppyGallery';
 import EnquiryLetterForm from './EnquiryLetterForm';
 import PupBuddy from './pup/PupBuddy';
+import StoryRibbon from './StoryRibbon';
 
 export default function PuppyModal({ puppy, onClose }) {
   const tagRef = useRef(null);
+  const modalBodyRef = useRef(null);
 
   useEffect(() => {
     if (!puppy) return;
@@ -30,6 +33,12 @@ export default function PuppyModal({ puppy, onClose }) {
 
   const mediaList = useMemo(() => {
     if (!puppy) return [];
+
+    // Exact media assets from original site database (e.g. 11 assets for Korean Teacup Maltipoo)
+    if (PUPPIES_MEDIA_MAP && PUPPIES_MEDIA_MAP[puppy.slug] && PUPPIES_MEDIA_MAP[puppy.slug].length > 0) {
+      return PUPPIES_MEDIA_MAP[puppy.slug];
+    }
+
     const list = [];
     const coverUrl = puppy.cover || puppy.coverImage;
     if (coverUrl) {
@@ -129,7 +138,13 @@ export default function PuppyModal({ puppy, onClose }) {
         </div>
 
         {/* Scrollable Storybook Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-8 sm:px-10 sm:py-10 [scrollbar-width:thin]">
+        <div
+          ref={modalBodyRef}
+          className="relative flex-1 overflow-y-auto px-6 py-8 sm:px-10 sm:py-10 [scrollbar-width:thin]"
+        >
+          {/* Red/Toffee Silk Ribbon Bookmark scrolling along the right side */}
+          <StoryRibbon position="right" containerRef={modalBodyRef} isModal={true} />
+
           {/* Chapter 1: hello, it's me */}
           <div>
             <p className="tp-chapter">

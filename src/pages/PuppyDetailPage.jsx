@@ -2,13 +2,16 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PUPPIES_DATA from '../data/puppiesReplicated.json';
 import PUPPIES_FULL from '../data/puppies';
+import PUPPIES_MEDIA_MAP from '../data/puppiesMediaMap.json';
 import PuppyGallery from '../components/PuppyGallery';
 import EnquiryLetterForm from '../components/EnquiryLetterForm';
 import PupBuddy from '../components/pup/PupBuddy';
+import StoryRibbon from '../components/StoryRibbon';
 
 export default function PuppyDetailPage() {
   const { slug } = useParams();
   const tagRef = useRef(null);
+  const storybookRef = useRef(null);
 
   // Combine data from both catalogues for maximum richness
   const allAvailable = PUPPIES_DATA.available || [];
@@ -48,8 +51,16 @@ export default function PuppyDetailPage() {
     );
   }
 
-  // Construct complete media list
+  // Complete media list from original site database
   const mediaList = useMemo(() => {
+    if (!puppy) return [];
+
+    // 1. Exact media list from original Next.js RSC payload (all 11 assets for Korean Teacup Maltipoo, etc.)
+    if (PUPPIES_MEDIA_MAP && PUPPIES_MEDIA_MAP[puppy.slug] && PUPPIES_MEDIA_MAP[puppy.slug].length > 0) {
+      return PUPPIES_MEDIA_MAP[puppy.slug];
+    }
+
+    // 2. Fallback if slug differs slightly
     const list = [];
     const coverUrl = puppy.cover || puppy.coverImage;
     if (coverUrl) {
@@ -109,11 +120,17 @@ export default function PuppyDetailPage() {
   return (
     <div data-page="pup" className="tp-page">
       <article
-        className="tp-storybook min-h-screen"
+        ref={storybookRef}
+        className="tp-storybook min-h-screen relative overflow-hidden"
         style={{
           background: `linear-gradient(180deg, color-mix(in oklab, ${bgColor} 24%, var(--color-milk)) 0, var(--color-milk) 85%)`,
         }}
       >
+        {/* Red / Toffee Silk Ribbon Bookmark scrolling from top to bottom on the right side */}
+        <StoryRibbon position="right" containerRef={storybookRef} />
+        {/* Supporting original left ribbon as well */}
+        <StoryRibbon position="left" containerRef={storybookRef} />
+
         <div className="gutter mx-auto max-w-[110rem] pb-24 pt-8 md:pt-12">
           {/* Breadcrumbs */}
           <nav aria-label="Breadcrumb" className="text-[0.95rem] font-semibold text-cocoa-soft">

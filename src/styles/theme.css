@@ -194,6 +194,53 @@ html {
   position: relative;
 }
 
+.tp-ribbon {
+  z-index: 25;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  width: 1.25rem;
+  position: absolute;
+}
+
+.tp-ribbon--right {
+  right: max(0.5rem, calc(var(--gutter) * 0.5 - 0.6rem));
+}
+
+.tp-ribbon--left {
+  left: max(0.5rem, calc(var(--gutter) * 0.5 - 0.6rem));
+}
+
+.tp-ribbon__track {
+  top: calc(var(--header-h) + 1.4rem);
+  height: calc(100vh - var(--header-h) - 4.4rem);
+  position: sticky;
+}
+
+.tp-ribbon__track:before {
+  content: "";
+  background: linear-gradient(90deg, #8e3f15, #c2622b 45%, #a24a1a);
+  border-radius: 0.6rem 0.6rem 0 0;
+  height: 0.6rem;
+  position: absolute;
+  inset: -0.6rem 0 auto;
+}
+
+.tp-ribbon__band {
+  transform-origin: 50% 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 0.75rem), 0 100%);
+  background: linear-gradient(90deg, #8e3f15, #c2622b 45%, #a24a1a);
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .tp-ribbon {
+    display: none;
+  }
+}
+
 .tp-storypage {
   border: 3px solid var(--color-cocoa);
   background: var(--color-honey-soft);
@@ -548,3 +595,71 @@ html {
   font-weight: 600;
   display: inline-flex;
 }
+
+/* Original TeddyPups Storybook Ribbon Bookmark */
+.tp-storybook {
+  position: relative;
+}
+
+.tp-ribbon {
+  z-index: 20;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  width: 1.2rem;
+  position: absolute;
+}
+
+.tp-ribbon--left {
+  left: max(0.3rem, calc(var(--gutter) * 0.5 - 0.6rem));
+}
+
+.tp-ribbon--right {
+  right: max(0.4rem, calc(var(--gutter) * 0.5 - 0.6rem));
+}
+
+.tp-ribbon--modal {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0.75rem;
+  width: 1.1rem;
+}
+
+.tp-ribbon__track {
+  top: calc(var(--header-h) + 1.4rem);
+  height: calc(100vh - var(--header-h) - 4.4rem);
+  position: sticky;
+}
+
+.tp-ribbon--modal .tp-ribbon__track {
+  top: 1rem;
+  height: calc(100% - 2.5rem);
+  position: sticky;
+}
+
+.tp-ribbon__track:before {
+  content: "";
+  background: linear-gradient(90deg, #8e3f15, #c2622b 45%, #a24a1a);
+  border-radius: 0.6rem 0.6rem 0 0;
+  height: 0.6rem;
+  position: absolute;
+  inset: -0.6rem 0 auto;
+}
+
+.tp-ribbon__band {
+  transform-origin: 50% 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 0.75rem), 0 100%);
+  background: linear-gradient(90deg, #8e3f15, #c2622b 45%, #a24a1a);
+  width: 100%;
+  height: 100%;
+  display: block;
+  box-shadow: 0 4px 12px rgba(142, 63, 21, 0.25);
+}
+
+@media (max-width: 639px) {
+  .tp-ribbon {
+    width: 0.85rem;
+  }
+}
+
