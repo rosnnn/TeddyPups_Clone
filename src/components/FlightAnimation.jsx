@@ -1,39 +1,40 @@
 import React, { useRef, useEffect, useId } from 'react';
 
 export default function FlightAnimation({
-  photo = '/media/gAaGwoGej2g6/5523e884dd/b942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg',
-  label = 'A plane bringing a Korean Teacup Maltipoo puppy from Korea to Dubai'
+  photo = null,
+  label = 'A plane flying puppies from Korea to Dubai'
 }) {
   const containerRef = useRef(null);
   const routeRef = useRef(null);
   const planeRef = useRef(null);
   const clipId = useId();
 
-  const updateFlight = (prog) => {
-    const route = routeRef.current;
-    const plane = planeRef.current;
-    if (!route || !plane) return;
-    const totalLen = route.getTotalLength();
-    const curLen = Math.min(totalLen, Math.max(0, prog * totalLen));
-    const pt = route.getPointAtLength(curLen);
-    const ptNext = route.getPointAtLength(Math.min(totalLen, curLen + 1));
-    const ptPrev = route.getPointAtLength(Math.max(0, curLen - 1));
-    const angle = (180 * Math.atan2(ptNext.y - ptPrev.y, ptNext.x - ptPrev.x)) / Math.PI;
-
-    plane.setAttribute('transform', `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)}) rotate(${angle.toFixed(1)})`);
-    plane.style.opacity = String(Math.min(1, Math.max(0, (prog - 0.11) / 0.06)));
-  };
-
   useEffect(() => {
+    const updateFlight = (prog) => {
+      const route = routeRef.current;
+      const plane = planeRef.current;
+      if (!route || !plane) return;
+      const totalLen = route.getTotalLength();
+      const curLen = Math.min(totalLen, Math.max(0, prog * totalLen));
+      const pt = route.getPointAtLength(curLen);
+      const ptNext = route.getPointAtLength(Math.min(totalLen, curLen + 1));
+      const ptPrev = route.getPointAtLength(Math.max(0, curLen - 1));
+      const angle = (180 * Math.atan2(ptNext.y - ptPrev.y, ptNext.x - ptPrev.x)) / Math.PI;
+
+      plane.setAttribute(
+        'transform',
+        `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)}) rotate(${angle.toFixed(1)})`
+      );
+      plane.style.opacity = String(Math.min(1, Math.max(0, (prog - 0.11) / 0.06)));
+    };
+
     const onScroll = () => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const vh = window.innerHeight;
-      // Scroll offset ["start 95%", "end 25%"]
-      // start when top hits 95% vh, end when bottom hits 25% vh
       const startPos = vh * 0.95;
-      const endPos = vh * 0.25 - rect.height;
-      const totalSpan = startPos - endPos;
+      const endPos = vh * 0.25;
+      const totalSpan = (startPos - endPos) + rect.height;
       const currentPos = startPos - rect.top;
       const prog = Math.min(1, Math.max(0, currentPos / (totalSpan || 1)));
       updateFlight(prog);
@@ -71,7 +72,10 @@ export default function FlightAnimation({
           <g transform="translate(-126 -78)">
             <path d="M28 60 L8 26 L34 26 L60 54 Z" className="tp-flight__wing" />
             <path d="M108 112 L142 156 L172 156 L158 112 Z" className="tp-flight__wing tp-flight__wing--far" />
-            <path d="M20 80 C20 52 52 44 80 44 L168 44 C200 44 224 60 232 80 C224 100 200 112 168 112 L80 112 C52 112 20 104 20 80 Z" className="tp-flight__body" />
+            <path
+              d="M20 80 C20 52 52 44 80 44 L168 44 C200 44 224 60 232 80 C224 100 200 112 168 112 L80 112 C52 112 20 104 20 80 Z"
+              className="tp-flight__body"
+            />
             <path d="M104 44 L138 2 L168 2 L154 44 Z" className="tp-flight__wing" />
             <path d="M206 64 C215 67 221 73 224 80" className="tp-flight__line" />
           </g>
