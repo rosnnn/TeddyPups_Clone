@@ -182,12 +182,59 @@ export default function HomePage() {
                   Puppies in Dubai
                 </h3>
                 <div className="tp-way__scene" data-pup-look="true">
+                  <svg viewBox="0 0 300 120" className="tp-way__skyline" aria-hidden="true">
+                    <path
+                      d="M4 116h292M20 116V78h16v38M44 116V60h18v56M70 116V84h12v32M150 116V36l4-6v-14l3-4 3 4v14l4 6v80M118 116V70l12-8v54M174 116V64l14 8v44M200 116V82h18v34M226 116V56h14v60M248 116V88h22v28"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <figure className="tp-window">
+                    <span className="tp-window__glass">
+                      <img
+                        alt="A tiny apricot teddy bear puppy held up in the TeddyPups showroom"
+                        loading="lazy"
+                        decoding="async"
+                        src="/media/FHyoHcIosLZE/60f6e7e00a/27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg"
+                        style={{
+                          position: 'absolute',
+                          height: '100%',
+                          width: '100%',
+                          left: 0,
+                          top: 0,
+                          right: 0,
+                          bottom: 0,
+                          objectFit: 'cover',
+                          objectPosition: '54.3% 48.3%'
+                        }}
+                      />
+                    </span>
+                    <figcaption className="font-scrawl">In our showroom</figcaption>
+                  </figure>
+                </div>
+                <p className="tp-way__text">
+                  See them, love them, take them home. Come meet our locally available puppies before you decide.
+                </p>
+                <Link className="btn btn-primary" to="/puppies?origin=local">
+                  Meet local puppies
+                </Link>
+              </article>
+
+              {/* Way 2: Imported for you */}
+              <article aria-labelledby="way-imported" className="tp-way tp-way--right">
+                <h3 className="tp-sign tp-sign--right font-plush" id="way-imported">
+                  Imported for you
+                </h3>
+                <div className="tp-way__scene" data-pup-look="true">
                   <FlightAnimation />
                 </div>
                 <p className="tp-way__text">
                   Exclusive Korean teacup puppies, delivered. Order from the world's most reputable breeders and let us handle the import.
                 </p>
-                <Link className="btn btn-primary" to="/how-it-works">
+                <Link className="btn btn-primary" to="/puppies?origin=imported">
                   See imported puppies
                 </Link>
               </article>

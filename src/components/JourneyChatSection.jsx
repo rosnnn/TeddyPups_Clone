@@ -143,7 +143,7 @@ export default function JourneyChatSection() {
           </ol>
 
           <Link to="/how-it-works" className="btn btn-ghost tp-chat__cta">
-            Learn more about the process
+            How it works
           </Link>
         </div>
 
