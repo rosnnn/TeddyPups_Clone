@@ -631,7 +631,7 @@ html {
 
 .tp-ribbon__track {
   top: calc(var(--header-h) + 1.4rem);
-  height: calc(100vh - var(--header-h) - 4.4rem);
+  height: calc(100vh - var(--header-h) - 1.4rem);
   position: sticky;
 }
 

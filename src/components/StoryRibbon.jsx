@@ -34,22 +34,22 @@ export default function StoryRibbon({ position = 'right', containerRef, isModal 
         const el = containerRef.current;
         const rect = el.getBoundingClientRect();
         const windowHeight = window.innerHeight;
-        // Start extending when top of story reaches 25% of viewport
-        const startOffset = windowHeight * 0.25;
-        const totalDist = rect.height - (windowHeight - startOffset);
-        if (totalDist > 0) {
-          const current = startOffset - rect.top;
-          progress = current / totalDist;
+        // Extends smoothly as user scrolls down and reaches full down (1.0)
+        // by the time the user scrolls through the chapters into enquiry form
+        const scrollDistance = -rect.top;
+        const targetScroll = Math.max(350, (rect.height - windowHeight) * 0.65);
+        if (targetScroll > 0) {
+          progress = scrollDistance / targetScroll;
         }
       } else {
         const scrollY = window.scrollY || window.pageYOffset;
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const maxScroll = Math.max(350, (document.documentElement.scrollHeight - window.innerHeight) * 0.65);
         if (maxScroll > 0) {
           progress = scrollY / maxScroll;
         }
       }
 
-      // Bound between 0.04 (initial tip showing) and 1.0 (fully extended)
+      // Bound between 0.04 (initial tip showing) and 1.0 (fully extended down to the bottom)
       const clamped = Math.min(1, Math.max(0.04, progress));
       setScaleY(clamped);
       ticking = false;

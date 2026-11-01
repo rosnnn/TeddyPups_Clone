@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function RawSvg({ svgString, className, defaultStyle = {} }) {
@@ -26,17 +26,38 @@ function RawSvg({ svgString, className, defaultStyle = {} }) {
 
 export default function PuppyCard({ pup, index = 0, small = false, onSelect }) {
   const cardRef = useRef(null);
+  const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
     const el = cardRef.current;
     if (!el) return;
-    el.dataset.armed = 'true';
-    const timer = setTimeout(() => {
-      if (el) el.dataset.revealed = 'true';
-    }, 50 + (index % 8) * 60);
 
-    return () => clearTimeout(timer);
-  }, [index]);
+    // Check if in initial viewport
+    const rect = el.getBoundingClientRect();
+    const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
+
+    if (inViewport) {
+      // In viewport on load/refresh: trigger reveal with smooth staggered drawing
+      const timer = setTimeout(() => {
+        setRevealed(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+
+    // Below viewport: trigger reveal when scrolled into view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setRevealed(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '0px 0px -4% 0px', threshold: 0.05 }
+    );
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [pup.slug]);
 
   const handleClick = (e) => {
     if (onSelect) {
@@ -52,6 +73,8 @@ export default function PuppyCard({ pup, index = 0, small = false, onSelect }) {
       onClick={handleClick}
       className={`tp-sketch${small ? ' tp-sketch--small' : ''}`}
       data-reveal="true"
+      data-armed="true"
+      data-revealed={revealed ? 'true' : undefined}
       style={{
         '--tilt': pup.tilt || '0deg',
         '--d': `${(index % 8) * 70}ms`,
