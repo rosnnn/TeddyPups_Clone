@@ -31,3 +31,5 @@ site.zip
 scraped_pages/
 clone.py
 scratch/
+deploy_*.py
+*.tar.gz
