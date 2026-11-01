@@ -1,98 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useId, useMemo, useRef, useEffect } from 'react';
 import PupBuddy from '../components/pup/PupBuddy';
+import faqsData from '../data/faqsExact.json';
 
-const FAQS_LIST = [
-  {
-    id: 'f1',
-    q: 'Are your puppies vaccinated and health-checked?',
-    a: 'Yes. All our puppies come with a verified health certificate from licensed vets. Every puppy is vaccinated, dewormed, and thoroughly checked before joining your family.',
-    tilt: '-1.6deg',
-    pin: 'var(--color-toffee)'
-  },
-  {
-    id: 'f2',
-    q: 'Can I meet a puppy before I decide?',
-    a: 'Yes. Come meet our locally available puppies in our Downtown Dubai showroom and spend time bonding before making your decision.',
-    tilt: '1.2deg',
-    pin: 'var(--color-sky-deep)'
-  },
-  {
-    id: 'f3',
-    q: 'Can I take my puppy home the same day?',
-    a: 'Local puppies are available immediately, so you can take your puppy home the same day.',
-    tilt: '-0.8deg',
-    pin: '#d9a13c'
-  },
-  {
-    id: 'f4',
-    q: 'Do you import puppies from abroad?',
-    a: 'Yes. Through our Order Upon Request service we source rare and premium teacup breeds from the most reputable, certified breeders across Europe, Korea, and beyond — and we handle the import for you.',
-    tilt: '1.8deg',
-    pin: '#c45a6a'
-  },
-  {
-    id: 'f5',
-    q: 'How does an imported puppy travel to Dubai?',
-    a: 'We manage every part of the import process, including health checks, travel arrangements, and the necessary documentation, so your puppy arrives happy, healthy, and stress-free.',
-    tilt: '-1.2deg',
-    pin: 'var(--color-toffee)'
-  },
-  {
-    id: 'f6',
-    q: 'Will I see photos and health details first?',
-    a: 'Yes. Photos, videos, and health certificates are shared before your puppy travels, and our team sends real photos and health details directly on WhatsApp.',
-    tilt: '0.7deg',
-    pin: 'var(--color-sky-deep)'
-  },
-  {
-    id: 'f7',
-    q: 'Do you deliver?',
-    a: 'Yes. We deliver within Dubai, and our trusted international cargo partners deliver puppies safely to loving homes all around the world.',
-    tilt: '-1.9deg',
-    pin: '#d9a13c'
-  },
-  {
-    id: 'f8',
-    q: 'Which breeds do you usually have?',
-    a: 'Breeds we regularly have include Maltipoo, Pomeranian, Poodle and Bichon, plus rare teacup lines such as Korean teacup poodles, Maltese, Pom and Yorkie.',
-    tilt: '1.4deg',
-    pin: '#c45a6a'
-  },
-  {
-    id: 'f9',
-    q: 'Is there help after my puppy comes home?',
-    a: 'Yes. Our team is available 24/7 and offers advice on training, nutrition, and general care to ensure a smooth transition for you and your new furry friend.',
-    tilt: '-1.6deg',
-    pin: 'var(--color-toffee)'
-  }
-];
+const TILTS = [-1.6, 1.2, -0.8, 1.8, -1.2, 0.7, -1.9, 1.4];
+const PINS = ['var(--color-toffee)', 'var(--color-sky-deep)', '#d9a13c', '#c45a6a'];
+const ASK_HREF = 'https://wa.me/971541676733?text=Hi%20TeddyPups!%20I%20have%20a%20question%3A';
+
+function Highlight({ text, query }) {
+  const q = query.trim();
+  if (!q) return <>{text}</>;
+  const parts = text.split(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
+  return (
+    <>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? <mark key={i}>{part}</mark> : <React.Fragment key={i}>{part}</React.Fragment>
+      )}
+    </>
+  );
+}
+
+function NoteItem({ item, idx, isOpen, onToggle, query, tilt, pin }) {
+  const itemRef = useRef(null);
+
+  useEffect(() => {
+    const el = itemRef.current;
+    if (!el) return;
+    el.dataset.armed = 'true';
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.dataset.revealed = 'true';
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            el.dataset.revealed = 'true';
+            observer.unobserve(el);
+          }
+        });
+      },
+      { rootMargin: '0px 0px -6% 0px', threshold: 0.08 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <li
+      ref={itemRef}
+      className="tp-note"
+      data-reveal="true"
+      data-unfolded={isOpen || undefined}
+      style={{
+        '--tilt': `${tilt}deg`,
+        '--pin': pin,
+        '--i': idx,
+      }}
+    >
+      <span aria-hidden="true" className="tp-note__pin" />
+      <h2 className="tp-note__q">
+        <button
+          type="button"
+          id={`q-${item.id}`}
+          aria-expanded={isOpen}
+          aria-controls={`a-${item.id}`}
+          onClick={onToggle}
+        >
+          <span className="font-plush-text">
+            <Highlight text={item.question} query={query} />
+          </span>
+          <span aria-hidden="true" className="tp-note__chevron" />
+        </button>
+      </h2>
+      <div
+        id={`a-${item.id}`}
+        role="region"
+        aria-labelledby={`q-${item.id}`}
+        className="tp-note__answer"
+        inert={!isOpen ? '' : undefined}
+      >
+        <div className="tp-note__flap">
+          <p>
+            <Highlight text={item.answer} query={query} />
+          </p>
+        </div>
+      </div>
+    </li>
+  );
+}
 
 export default function FAQPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [openIds, setOpenIds] = useState(new Set());
+  const [openId, setOpenId] = useState(null);
+  const [query, setQuery] = useState('');
+  const inputId = useId();
 
-  const toggleNote = (id) => {
-    setOpenIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-        window.dispatchEvent(
-          new CustomEvent('pup:cue', {
-            detail: { say: 'good question!', secs: 1.2 }
-          })
-        );
-      }
-      return next;
-    });
-  };
-
-  const filteredFaqs = FAQS_LIST.filter(
-    (item) =>
-      item.q.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.a.toLowerCase().includes(searchTerm.toLowerCase())
+  const q = query.trim().toLowerCase();
+  const filtered = useMemo(
+    () => (q ? faqsData.filter((f) => `${f.question} ${f.answer}`.toLowerCase().includes(q)) : faqsData),
+    [q]
   );
+
+  const handleToggle = (id) => {
+    const isOpening = openId !== id;
+    setOpenId(isOpening ? id : null);
+    if (isOpening) {
+      window.dispatchEvent(
+        new CustomEvent('pup:cue', {
+          detail: { say: 'good question!', secs: 1.2 },
+        })
+      );
+    }
+  };
 
   return (
     <div className="tp-page" data-page="faq">
@@ -100,117 +119,111 @@ export default function FAQPage() {
         aria-labelledby="faq-title"
         className="tp-scene tp-faqroom overflow-hidden"
         data-pup-scene="true"
-        data-tone="light"
-        style={{ '--sky-top': '#fffcf5', '--sky-bottom': '#fbe1ae' }}
+        data-tone="dark"
+        style={{ '--sky-top': '#a95e32', '--sky-bottom': '#331c11' }}
       >
         <div className="gutter relative mx-auto max-w-[110rem] pb-24 pt-10 md:pt-16">
-          <header className="max-w-[48ch]">
+          {/* Header */}
+          <header className="max-w-4xl">
             <h1 className="font-plush text-giant" id="faq-title">
               Questions &amp; answers
             </h1>
-            <p className="text-lede mt-4 text-[var(--ink-soft)]">
-              Everything you need to know about adopting a puppy with TeddyPups in Dubai — visits, health checks, travel, and aftercare.
+            <p className="text-lede mt-6 max-w-[52ch] text-[var(--ink-soft)]">
+              Can&#x27;t find what you&#x27;re looking for? Message us on WhatsApp — our team is available 24/7.
             </p>
           </header>
 
-          <div className="mt-14 tp-notes">
-            {/* Sticky Side Column: Search & Mascot */}
-            <aside aria-label="Find a question" className="tp-notes__side">
-              <label className="font-scrawl tp-notes__label" htmlFor="faq-search-input">
-                sniff out a question
-              </label>
-              <div className="tp-notes__search">
-                <svg aria-hidden="true" className="tp-notes__lens" viewBox="0 0 24 24">
-                  <circle cx="10.5" cy="10.5" r="6.5" />
-                  <path d="m15.5 15.5 5 5" />
-                </svg>
-                <input
-                  id="faq-search-input"
-                  type="search"
-                  autoComplete="off"
-                  placeholder="delivery, Korea, vaccinated…"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-
-              <p aria-live="polite" className="tp-notes__count">
-                {filteredFaqs.length} note{filteredFaqs.length === 1 ? '' : 's'} on the board
-              </p>
-
-              <div className="tp-notes__teddy">
-                <span aria-hidden="true" className="tp-notes__bubble font-plush">
-                  <span className="tp-notes__q">?</span>
-                  <span className="tp-notes__a">!</span>
-                </span>
-                <PupBuddy facing="right" pose="sit" />
-              </div>
-            </aside>
-
-            {/* Right Column: Corkboard Notes */}
-            <div className="tp-notes__board">
-              <ul className="tp-notes__list">
-                {filteredFaqs.map((item, idx) => {
-                  const isOpen = openIds.has(item.id);
-                  return (
-                    <li
-                      key={item.id}
-                      className="tp-note"
-                      data-reveal="true"
-                      data-open={isOpen ? 'true' : undefined}
-                      style={{
-                        '--tilt': item.tilt,
-                        '--pin': item.pin,
-                        '--i': idx
-                      }}
-                    >
-                      <span aria-hidden="true" className="tp-note__pin" />
-                      <h2 className="tp-note__q">
-                        <button
-                          type="button"
-                          aria-expanded={isOpen}
-                          aria-controls={`a-${item.id}`}
-                          id={`q-${item.id}`}
-                          onClick={() => toggleNote(item.id)}
-                        >
-                          <span className="font-plush-text">{item.q}</span>
-                          <span aria-hidden="true" className="tp-note__chevron" />
-                        </button>
-                      </h2>
-                      <div
-                        id={`a-${item.id}`}
-                        role="region"
-                        aria-labelledby={`q-${item.id}`}
-                        className="tp-note__answer"
-                        style={{ display: isOpen ? 'block' : 'none' }}
-                      >
-                        <div className="tp-note__flap">
-                          <p>{item.a}</p>
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              {/* Bottom WhatsApp CTA */}
-              <div className="mt-16 flex flex-col items-start gap-4 rounded-3xl bg-[var(--color-creme)] p-8 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <h3 className="font-plush text-2xl text-[var(--ink)]">
-                    Still have a question?
-                  </h3>
-                  <p className="mt-1 text-[var(--ink-soft)]">
-                    Our concierge team is available 24/7 on WhatsApp.
-                  </p>
+          {/* Corkboard with sticky side filter and animated notes */}
+          <div className="mt-14">
+            <div className="tp-notes" data-open={openId || q ? '' : undefined}>
+              {/* Sticky Sidebar: Search, Count, Pup Buddy & WhatsApp CTA */}
+              <aside aria-label="Find a question" className="tp-notes__side">
+                <label className="font-scrawl tp-notes__label" htmlFor={inputId}>
+                  sniff out a question
+                </label>
+                <div className="tp-notes__search">
+                  <svg aria-hidden="true" className="tp-notes__lens" viewBox="0 0 24 24">
+                    <circle cx="10.5" cy="10.5" r="6.5" />
+                    <path d="m15.5 15.5 5 5" />
+                  </svg>
+                  <input
+                    autoComplete="off"
+                    id={inputId}
+                    placeholder="delivery, Korea, vaccinated…"
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
                 </div>
+
+                <p aria-live="polite" className="tp-notes__count">
+                  {query.trim()
+                    ? `${filtered.length} ${filtered.length === 1 ? 'note' : 'notes'} found`
+                    : `${faqsData.length} notes on the board`}
+                </p>
+
+                <div className="tp-notes__teddy">
+                  <span aria-hidden="true" className="tp-notes__bubble font-plush">
+                    <span className="tp-notes__q">?</span>
+                    <span className="tp-notes__a">!</span>
+                  </span>
+                  <PupBuddy
+                    pose="sit"
+                    act="tilt"
+                    label="Teddy, reading the notes"
+                  />
+                </div>
+
                 <a
-                  href="https://wa.me/971507779999"
-                  target="_blank"
+                  className="btn btn-whatsapp tp-notes__ask"
+                  href={ASK_HREF}
                   rel="noopener noreferrer"
-                  className="btn btn-primary"
+                  target="_blank"
                 >
-                  Chat with concierge
+                  Ask your own question
                 </a>
+              </aside>
+
+              {/* Corkboard Notice Board */}
+              <div className="tp-notes__board">
+                <ul className="tp-notes__list">
+                  {filtered.map((item, idx) => {
+                    const isOpen = openId === item.id || (!!q && item.answer.toLowerCase().includes(q));
+                    return (
+                      <NoteItem
+                        key={item.id}
+                        idx={idx}
+                        isOpen={isOpen}
+                        item={item}
+                        pin={PINS[idx % PINS.length]}
+                        query={query}
+                        tilt={TILTS[idx % TILTS.length]}
+                        onToggle={() => handleToggle(item.id)}
+                      />
+                    );
+                  })}
+                </ul>
+
+                {/* Empty State */}
+                {!filtered.length && (
+                  <div className="tp-note tp-note--empty">
+                    <span aria-hidden="true" className="tp-note__pin" />
+                    <p className="font-plush-text text-[1.2rem] font-bold">
+                      No note about “{query.trim()}” yet.
+                    </p>
+                    <p className="mt-2">
+                      <a
+                        className="link-ink"
+                        href={ASK_HREF}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        Ask us on WhatsApp
+                      </a>{' '}
+                      and we&#x27;ll answer.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
