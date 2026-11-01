@@ -434,7 +434,8 @@ export class PupRigController {
     const m = this.m;
     m.time = time;
 
-    this.pose = interpolatePose(this.pose, this.target, damp(dt, 0.16));
+    const poseRate = this.target.front === 0 ? 0.09 : 0.16;
+    this.pose = interpolatePose(this.pose, this.target, damp(dt, poseRate));
     this.facing += (this.facingTarget - this.facing) * damp(dt, this.turn);
 
     m.stride += (this.strideTarget - m.stride) * damp(dt, 0.12);

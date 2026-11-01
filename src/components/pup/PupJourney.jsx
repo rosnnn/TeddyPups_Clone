@@ -376,7 +376,7 @@ export function PupJourney() {
       const travelGaps = stops.slice(1).map((st, idx) => {
         const prevSt = stops[idx];
         const travelY = (STOP_P_DESKTOP[1] - STOP_P_DESKTOP[0]) * clientH;
-        const minTravel = (isMobile ? 0.32 : 0.5) * clientH;
+        const minTravel = isMobile ? Math.max(0.48 * clientH, 380) : 0.5 * clientH;
         const prevX = prevSt.x + PUP_ORIGIN.x * prevSt.s;
         const curX = st.x + PUP_ORIGIN.x * st.s;
         return Math.min(1.4 * clientH, Math.max(minTravel, 1.15 * Math.hypot(Math.abs(curX - prevX), travelY)));
@@ -614,7 +614,7 @@ export function PupJourney() {
         if (!screenSmoothPos) {
           screenSmoothPos = prevPos ? { x: prevPos.x, y: prevPos.y - lastAnchorY } : { x: renderX, y: renderY - bottomAnchor };
         }
-        const smoothRate = 1 - Math.exp(-dt / 0.14);
+        const smoothRate = 1 - Math.exp(-dt / (plan.lane ? 0.20 : 0.14));
         screenSmoothPos.x += (renderX - screenSmoothPos.x) * smoothRate;
         screenSmoothPos.y += (renderY - bottomAnchor - screenSmoothPos.y) * smoothRate;
         isArrived = Math.hypot(renderX - screenSmoothPos.x, renderY - bottomAnchor - screenSmoothPos.y) < 1.5;
@@ -745,7 +745,8 @@ export function PupJourney() {
           controller.stride(1);
         }
 
-        controller.walkedTo((isScreenStop ? (totalWalked += movedDist) : evalState.walked) / Math.max(0.05, renderScale));
+        const walkDivisor = plan.lane ? 28 : 46;
+        controller.walkedTo((isScreenStop ? (totalWalked += movedDist * 1.35) : evalState.walked) / Math.max(0.05, renderScale * (walkDivisor / 46)));
 
         if (prevPos) {
           const dx = renderX - prevPos.x;

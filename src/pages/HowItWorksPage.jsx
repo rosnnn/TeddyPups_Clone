@@ -517,7 +517,7 @@ export default function HowItWorksPage() {
             <PupBuddy
               className="mx-auto w-48 md:w-56"
               facing="left"
-              pose="sit"
+              pose="bow"
               label="Teddy, ready to play"
             />
           </section>
