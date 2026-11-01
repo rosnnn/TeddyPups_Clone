@@ -1,28 +1,155 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+const PAW_PRINTS = [
+  { left: '18%', top: '6px', rotate: '14deg', delay: '0.16s' },
+  { left: '27%', top: '-4px', rotate: '6deg', delay: '0.28s' },
+  { left: '36%', top: '7px', rotate: '18deg', delay: '0.4s' },
+  { left: '45%', top: '-3px', rotate: '4deg', delay: '0.52s' },
+  { left: '54%', top: '6px', rotate: '16deg', delay: '0.64s' },
+];
+
+const PAW_PATH = "M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z";
 
 export default function IntroCurtain() {
   const [curtainState, setCurtainState] = useState('intro');
+  const [cycle, setCycle] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const curtainRef = useRef(null);
+  const timeoutsRef = useRef([]);
+  const pendingTargetRef = useRef(null);
+  const currentPathRef = useRef(location.pathname);
+  const isTransitioningRef = useRef(false);
+
+  const navigateRef = useRef(navigate);
   useEffect(() => {
+    navigateRef.current = navigate;
+  });
+
+  const clearAllTimeouts = () => {
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+  };
+
+  const addTimeout = (fn, delay) => {
+    const id = setTimeout(fn, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  const updateState = (state) => {
+    setCurtainState(state);
+    if (curtainRef.current) {
+      curtainRef.current.dataset.state = state;
+    }
+    const root = document.documentElement;
+    if (state === 'idle') {
+      delete root.dataset.curtain;
+      isTransitioningRef.current = false;
+    } else {
+      root.dataset.curtain = state;
+    }
+  };
+
+  // Initial load / refresh sequence: runs "intro"
+  useEffect(() => {
+    updateState('intro');
     const timer = setTimeout(() => {
-      setCurtainState('open');
-    }, 1100);
-    return () => clearTimeout(timer);
+      updateState('idle');
+    }, 1040);
+    return () => {
+      clearTimeout(timer);
+      delete document.documentElement.dataset.curtain;
+    };
   }, []);
 
-  if (curtainState === 'dismissed') return null;
+  // Intercept all internal navigation link clicks
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const link = e.target?.closest?.('a[href]');
+      if (!link || (link.target && link.target !== '_self') || link.hasAttribute('download') || link.dataset.noCurtain !== undefined) return;
+
+      const targetUrl = new URL(link.href, window.location.href);
+      if (targetUrl.origin !== window.location.origin) return; // external (WhatsApp, Maps, Instagram)
+      if (/^\/(admin|api|media|_next)(\/|$)/.test(targetUrl.pathname)) return;
+      if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search && targetUrl.hash) return; // in-page anchor
+
+      if (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) return;
+
+      // Prevent immediate navigation so curtain can drop down smoothly
+      e.preventDefault();
+      e.stopPropagation();
+
+      const targetPath = targetUrl.pathname + targetUrl.search + targetUrl.hash;
+      pendingTargetRef.current = targetPath;
+      isTransitioningRef.current = true;
+      setCycle((c) => c + 1);
+
+      clearAllTimeouts();
+
+      // Start covering
+      updateState('covering');
+
+      // After 300ms, blanket has covered screen
+      addTimeout(() => {
+        updateState('covered');
+        const dest = pendingTargetRef.current;
+        if (dest) {
+          navigateRef.current(dest);
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        // After new route is mounted, lift blanket
+        addTimeout(() => {
+          updateState('lifting');
+
+          // After 460ms lift completes, settle to idle
+          addTimeout(() => {
+            updateState('idle');
+            pendingTargetRef.current = null;
+          }, 460);
+        }, 120);
+      }, 300);
+    };
+
+    const handlePopState = () => {
+      if (isTransitioningRef.current) return;
+      if (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) return;
+      if (window.location.pathname === currentPathRef.current) return;
+      clearAllTimeouts();
+      isTransitioningRef.current = true;
+      setCycle((c) => c + 1);
+      updateState('snap');
+      addTimeout(() => {
+        updateState('lifting');
+        addTimeout(() => updateState('idle'), 460);
+      }, 140);
+    };
+
+    document.addEventListener('click', handleClick, true);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      document.removeEventListener('click', handleClick, true);
+      window.removeEventListener('popstate', handlePopState);
+      clearAllTimeouts();
+      delete document.documentElement.dataset.curtain;
+    };
+  }, []);
+
+  useEffect(() => {
+    currentPathRef.current = location.pathname;
+  }, [location.pathname]);
 
   return (
     <div
-      aria-hidden={curtainState === 'open'}
+      ref={curtainRef}
+      aria-hidden={curtainState === 'idle'}
       className="tp-curtain"
       data-state={curtainState}
-      onClick={() => setCurtainState('open')}
-      style={{
-        transition: 'transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.6s ease',
-        transform: curtainState === 'open' ? 'translateY(-100%)' : 'translateY(0)',
-        pointerEvents: curtainState === 'open' ? 'none' : 'auto'
-      }}
     >
       <div className="tp-curtain__blanket">
         <svg className="tp-curtain__edge tp-curtain__edge--top" height="40" preserveAspectRatio="none" width="100%">
@@ -36,23 +163,23 @@ export default function IntroCurtain() {
           <rect fill="url(#tp-curtain-scallop)" height="40" width="100%"></rect>
         </svg>
 
-        <div className="tp-curtain__stage">
+        <div className="tp-curtain__stage" key={cycle}>
           <div className="tp-curtain__prints">
-            <svg className="tp-curtain__print" style={{ left: '18%', top: '6px', rotate: '14deg', animationDelay: '0.16s' }} viewBox="0 0 64 64">
-              <path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z"></path>
-            </svg>
-            <svg className="tp-curtain__print" style={{ left: '27%', top: '-4px', rotate: '6deg', animationDelay: '0.28s' }} viewBox="0 0 64 64">
-              <path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z"></path>
-            </svg>
-            <svg className="tp-curtain__print" style={{ left: '36%', top: '7px', rotate: '18deg', animationDelay: '0.4s' }} viewBox="0 0 64 64">
-              <path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z"></path>
-            </svg>
-            <svg className="tp-curtain__print" style={{ left: '45%', top: '-3px', rotate: '4deg', animationDelay: '0.52s' }} viewBox="0 0 64 64">
-              <path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z"></path>
-            </svg>
-            <svg className="tp-curtain__print" style={{ left: '54%', top: '6px', rotate: '16deg', animationDelay: '0.64s' }} viewBox="0 0 64 64">
-              <path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z"></path>
-            </svg>
+            {PAW_PRINTS.map((print, idx) => (
+              <svg
+                key={idx}
+                className="tp-curtain__print"
+                style={{
+                  left: print.left,
+                  top: print.top,
+                  rotate: print.rotate,
+                  animationDelay: print.delay,
+                }}
+                viewBox="0 0 64 64"
+              >
+                <path d={PAW_PATH}></path>
+              </svg>
+            ))}
           </div>
 
           <div className="tp-curtain__runner">

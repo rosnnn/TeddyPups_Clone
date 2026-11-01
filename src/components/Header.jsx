@@ -1,9 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    let lastY = -1;
+    let ticking = false;
+
+    const update = () => {
+      const currentY = window.scrollY;
+      header.dataset.scrolled = currentY > 8 ? "true" : "false";
+      if (Math.abs(currentY - lastY) > 6) {
+        header.dataset.hidden = currentY > lastY && currentY > 220 ? "true" : "false";
+        lastY = currentY;
+      }
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    const onFocusIn = () => {
+      header.dataset.hidden = "false";
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    header.addEventListener("focusin", onFocusIn);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      header.removeEventListener("focusin", onFocusIn);
+    };
+  }, [location.pathname]);
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -24,10 +62,11 @@ export default function Header() {
   return (
     <>
       <header
+        ref={headerRef}
         id="site-header"
         data-scrolled="false"
         data-hidden="false"
-        data-home={location.pathname === '/'}
+        data-home={location.pathname === '/' ? "true" : undefined}
         className="tp-header fixed inset-x-0 top-0 z-50"
       >
         <div className="tp-header__bar gutter">
