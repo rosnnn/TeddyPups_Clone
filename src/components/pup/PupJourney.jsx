@@ -373,25 +373,56 @@ export function PupJourney() {
 
       const maxScroll = docEl.scrollHeight - window.innerHeight;
 
-      // Adjust hold overlaps
-      const resolvedHolds = holds.map((h) => (h[0] <= h[1] ? [h[0], h[1]] : [(h[0] + h[1]) / 2, (h[0] + h[1]) / 2]));
-      if (resolvedHolds.length) {
-        resolvedHolds[0][0] = -Infinity;
-        const lastH = resolvedHolds[resolvedHolds.length - 1];
-        lastH[1] = Infinity;
-        lastH[0] = Math.min(lastH[0], maxScroll - 1);
+      const travelGaps = stops.slice(1).map((st, idx) => {
+        const prevSt = stops[idx];
+        const travelY = (STOP_P_DESKTOP[1] - STOP_P_DESKTOP[0]) * clientH;
+        const minTravel = (isMobile ? 0.32 : 0.5) * clientH;
+        const prevX = prevSt.x + PUP_ORIGIN.x * prevSt.s;
+        const curX = st.x + PUP_ORIGIN.x * st.s;
+        return Math.min(1.4 * clientH, Math.max(minTravel, 1.15 * Math.hypot(Math.abs(curX - prevX), travelY)));
+      });
 
-        for (let i = 0; i < resolvedHolds.length - 1; i++) {
-          const curH = resolvedHolds[i];
-          const nextH = resolvedHolds[i + 1];
+      const resolveHolds = (rawHolds, gaps, maxS) => {
+        const getGap = (idx) => (typeof gaps === "number" ? gaps : gaps[idx] ?? 0);
+        const n = rawHolds.map((h) => (h[0] <= h[1] ? [h[0], h[1]] : [(h[0] + h[1]) / 2, (h[0] + h[1]) / 2]));
+        if (!n.length) return n;
+        n[0][0] = -Infinity;
+        const lastH = n[n.length - 1];
+        lastH[1] = Infinity;
+        lastH[0] = Math.min(lastH[0], maxS - 1);
+
+        for (let i = 0; i < n.length - 1; i++) {
+          const curH = n[i];
+          const nextH = n[i + 1];
           if (nextH[0] < curH[1]) {
             const mid = (curH[1] + nextH[0]) / 2;
             curH[1] = Math.max(curH[0], mid);
             nextH[0] = Math.min(nextH[1], mid);
             if (nextH[0] < curH[1]) nextH[0] = curH[1];
           }
+          let deficit = getGap(i) - (nextH[0] - curH[1]);
+          if (deficit > 0) {
+            const redCur = Math.min(deficit / 2, curH[1] - curH[0]);
+            const incNext = Math.min(deficit / 2, nextH[1] - nextH[0]);
+            curH[1] -= redCur;
+            nextH[0] += incNext;
+            deficit -= redCur + incNext;
+            const extraNext = Math.min(deficit, nextH[1] - nextH[0]);
+            nextH[0] += extraNext;
+            deficit -= extraNext;
+            if (deficit > 0) {
+              curH[1] -= Math.min(deficit, curH[1] - curH[0]);
+            }
+          }
         }
-      }
+
+        for (const h of n) {
+          if (h[1] < h[0]) h[1] = h[0];
+        }
+        return n;
+      };
+
+      const resolvedHolds = resolveHolds(holds, travelGaps, maxScroll);
 
       return {
         lane: isMobile,
@@ -536,10 +567,29 @@ export function PupJourney() {
         trickSchedule.shift()[1](now);
       }
 
-      const targetScroll = now - lastScrollMotionTime > 0.25 ? curScroll : curScroll;
+      const snapScroll = (stops, holds, curSc) => {
+        const { k: s, t: n } = findSegment(holds, curSc);
+        if (n <= 0 || s >= stops.length - 1) return curSc;
+        const stA = stops[s];
+        const stB = stops[s + 1];
+        const threshA = stA?.sink ? 0.22 : 0.36 * (stA?.behind ? 1 : 0);
+        const threshB = stB?.sink ? 0.78 : stB?.behind ? 0.68 : 1;
+        let d = n;
+        if (n < threshA) {
+          d = n < threshA / 2 ? 0 : threshA;
+        } else if (n > threshB) {
+          d = n > (1 + threshB) / 2 ? 1 : threshB;
+        }
+        return d === n ? curSc : holds[s][1] + d * (holds[s + 1][0] - holds[s][1]);
+      };
+
+      const targetScroll = now - lastScrollMotionTime > 0.25 ? snapScroll(plan.stops, plan.holds, curScroll) : curScroll;
       const evalState = evalJourney(plan, targetScroll);
 
-      const isScreenStop = plan.lane && plan.stops[evalState.k]?.track.kind === "screen";
+      const stCur = plan.stops[evalState.k];
+      const stNext = evalState.t > 0 ? plan.stops[evalState.k + 1] : stCur;
+      const isScreenStop = plan.lane && (stCur?.track.kind === "screen" && stNext?.track.kind === "screen");
+
       const decay = Math.exp(-dt / 0.28);
       smoothOffset.x *= decay;
       smoothOffset.y *= decay;
@@ -547,10 +597,18 @@ export function PupJourney() {
       if (Math.abs(smoothOffset.x) < 0.05) smoothOffset.x = 0;
       if (Math.abs(smoothOffset.y) < 0.05) smoothOffset.y = 0;
 
+      const isSnapping = targetScroll !== curScroll;
+      if (isSnapping !== prevSnapping && prevPos && !isScreenStop) {
+        smoothOffset.x = prevPos.x - evalState.x;
+        smoothOffset.y = prevPos.y - evalState.y;
+      }
+      prevSnapping = isSnapping;
+
       const renderScale = evalState.s + smoothOffset.s;
       let renderX = evalState.x + smoothOffset.x;
       let renderY = evalState.y + smoothOffset.y;
       const bottomAnchor = plan.lane ? getBottomSafeArea() : 0;
+      let isArrived = true;
 
       if (isScreenStop) {
         if (!screenSmoothPos) {
@@ -559,10 +617,17 @@ export function PupJourney() {
         const smoothRate = 1 - Math.exp(-dt / 0.14);
         screenSmoothPos.x += (renderX - screenSmoothPos.x) * smoothRate;
         screenSmoothPos.y += (renderY - bottomAnchor - screenSmoothPos.y) * smoothRate;
+        isArrived = Math.hypot(renderX - screenSmoothPos.x, renderY - bottomAnchor - screenSmoothPos.y) < 1.5;
         renderX = screenSmoothPos.x;
         renderY = bottomAnchor + screenSmoothPos.y;
       } else {
-        screenSmoothPos = null;
+        if (screenSmoothPos) {
+          smoothOffset.x = (prevPos?.x ?? renderX) - evalState.x;
+          smoothOffset.y = (prevPos?.y ?? renderY) - evalState.y;
+          renderX = evalState.x + smoothOffset.x;
+          renderY = evalState.y + smoothOffset.y;
+          screenSmoothPos = null;
+        }
       }
       lastAnchorY = bottomAnchor;
 
@@ -570,7 +635,7 @@ export function PupJourney() {
       setDataset(layer, "anchor", isScreenStop ? "bottom" : "top");
       screenTopOffset = isScreenStop ? layer.getBoundingClientRect().top : 0;
 
-      const atStop = evalState.t === 0;
+      const atStop = evalState.t === 0 && isArrived;
       const stopIndex = evalState.k;
 
       if (atStop) {
@@ -662,17 +727,17 @@ export function PupJourney() {
         if (plan.lane && evalState.t > 0) {
           const stA = plan.stops[stopIndex];
           const stB = plan.stops[stopIndex + 1];
-          if (stA.sink && evalState.t < 0.22) isAir = scrollDir > 0;
+          if (stA?.sink && evalState.t < 0.22) isAir = scrollDir > 0;
           else if (stB?.sink && evalState.t > 0.78) isAir = scrollDir < 0;
         }
 
         if (isAir) {
           controller.setPose("hop");
           controller.stride(0);
-        } else if (stationaryTime > 0.25) {
+        } else if (stationaryTime > 0.3) {
           controller.setPose("stand");
           controller.stride(0);
-          if (stationaryTime > 0.85 && stationaryTime - dt <= 0.85) {
+          if (stationaryTime > 2.6 && stationaryTime - dt <= 2.6) {
             say("coming?", now, 1.4);
           }
         } else {
