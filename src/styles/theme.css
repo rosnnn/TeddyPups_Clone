@@ -612,10 +612,12 @@ html {
 
 .tp-ribbon--left {
   left: max(0.3rem, calc(var(--gutter) * 0.5 - 0.6rem));
+  right: auto;
 }
 
 .tp-ribbon--right {
   right: max(0.4rem, calc(var(--gutter) * 0.5 - 0.6rem));
+  left: auto;
 }
 
 .tp-ribbon--modal {
@@ -623,6 +625,7 @@ html {
   top: 0;
   bottom: 0;
   right: 0.75rem;
+  left: auto;
   width: 1.1rem;
 }
 

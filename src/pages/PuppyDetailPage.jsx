@@ -121,7 +121,7 @@ export default function PuppyDetailPage() {
     <div data-page="pup" className="tp-page">
       <article
         ref={storybookRef}
-        className="tp-storybook min-h-screen relative overflow-hidden"
+        className="tp-storybook min-h-screen relative"
         style={{
           background: `linear-gradient(180deg, color-mix(in oklab, ${bgColor} 24%, var(--color-milk)) 0, var(--color-milk) 85%)`,
         }}
