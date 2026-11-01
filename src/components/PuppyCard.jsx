@@ -1,67 +1,119 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-export default function PuppyCard({ puppy, onSelect, isSmall = false }) {
-  const isGone = puppy.status === 'Gone Home';
+function RawSvg({ svgString, className, defaultStyle = {} }) {
+  if (!svgString) return null;
+  const styleMatch = svgString.match(/style="([^"]*)"/);
+  const styleStr = styleMatch ? styleMatch[1] : '';
+  const parsedStyle = { ...defaultStyle };
+  if (styleStr) {
+    styleStr.split(';').forEach((rule) => {
+      const [k, v] = rule.split(':').map((s) => s?.trim());
+      if (k && v) parsedStyle[k] = v;
+    });
+  }
+  const inner = svgString.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 100 100"
+      className={className}
+      style={parsedStyle}
+      dangerouslySetInnerHTML={{ __html: inner }}
+    />
+  );
+}
+
+export default function PuppyCard({ pup, index = 0, small = false, onSelect }) {
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    el.dataset.armed = 'true';
+    const timer = setTimeout(() => {
+      if (el) el.dataset.revealed = 'true';
+    }, 50 + (index % 8) * 60);
+
+    return () => clearTimeout(timer);
+  }, [index]);
 
   const handleClick = (e) => {
     if (onSelect) {
       e.preventDefault();
-      onSelect(puppy);
+      onSelect(pup);
     }
   };
 
   return (
     <Link
-      to={`/puppies/${puppy.slug}`}
+      ref={cardRef}
+      to={`/puppies/${pup.slug}`}
       onClick={handleClick}
-      className={`tp-sketch group block cursor-pointer transition-transform duration-300 hover:-translate-y-1 ${
-        isSmall ? 'tp-sketch--small' : ''
-      }`}
+      className={`tp-sketch${small ? ' tp-sketch--small' : ''}`}
+      data-reveal="true"
+      style={{
+        '--tilt': pup.tilt || '0deg',
+        '--d': `${(index % 8) * 70}ms`,
+        '--wash': pup.wash || '#f2be6b',
+      }}
+      aria-label={pup.ariaLabel || `${pup.displayName}, available`}
     >
-      <span className="tp-sketch__frame relative block overflow-hidden rounded-[1.6rem] bg-milk shadow-md">
-        {/* Status Sticker */}
+      <span className="tp-sketch__frame">
+        {/* Organic wash behind */}
+        <RawSvg svgString={pup.washSvg} className="tp-sketch__wash" />
+
+        {/* Masked Photo with organic SVG mask */}
         <span
-          className={`tp-sketch__sticker font-scrawl absolute left-3 top-3 z-10 rounded-full px-3 py-1 text-sm shadow-sm ${
-            isGone
-              ? 'tp-sketch__sticker--home bg-blush text-cocoa'
-              : 'bg-honey text-cocoa'
-          }`}
+          className="tp-sketch__photo"
+          style={{
+            maskImage: `url("${pup.maskSvg}")`,
+            WebkitMaskImage: `url("${pup.maskSvg}")`,
+          }}
         >
-          {isGone ? 'gone home ♥' : 'Available'}
+          <img
+            src={pup.cover}
+            alt=""
+            loading="lazy"
+            style={{
+              position: 'absolute',
+              height: '100%',
+              width: '100%',
+              left: 0,
+              top: 0,
+              right: 0,
+              bottom: 0,
+              objectFit: 'cover',
+            }}
+          />
         </span>
 
-        {/* Video Badge */}
-        {puppy.hasVideo && !isGone && (
-          <span className="tp-sketch__video font-scrawl absolute right-3 top-3 z-10 rounded-full bg-cocoa/80 px-2.5 py-1 text-xs text-milk backdrop-blur-sm">
-            ▶ video
+        {/* Hand-drawn ink borders and doodles */}
+        <RawSvg svgString={pup.inkSvg} className="tp-sketch__ink" />
+
+        {/* Sticker badges */}
+        {!small ? (
+          <span className="tp-sketch__sticker font-scrawl">Available</span>
+        ) : (
+          <span className="tp-sketch__sticker tp-sketch__sticker--home font-scrawl">
+            gone home ♥
           </span>
         )}
 
-        {/* Puppy Photo */}
-        <div className="aspect-square w-full overflow-hidden bg-honey-soft/30">
-          <img
-            src={puppy.coverImage || '/brand/logo.png'}
-            alt={`${puppy.name}, ${puppy.breed}`}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            onError={(e) => {
-              // fallback if specific image path fails
-              e.target.src = '/brand/logo.png';
-            }}
-          />
-        </div>
+        {/* Video badge */}
+        {pup.hasVideo && !small && (
+          <span className="tp-sketch__video">▶ video</span>
+        )}
       </span>
 
-      {/* Puppy Name & Meta */}
-      <div className="mt-3.5 px-1">
-        <span className="tp-sketch__name font-plush block text-xl text-cocoa group-hover:text-toffee transition-colors">
-          {puppy.name}
+      <span className="tp-sketch__name font-plush">{pup.displayName}</span>
+      {!small && (
+        <span className="tp-sketch__meta">
+          {pup.breed && `${pup.breed} · `}
+          {pup.genderLabel}
+          {pup.age && ` · ${pup.age}`}
         </span>
-        <span className="tp-sketch__meta block text-sm font-medium text-cocoa-soft/80 mt-0.5">
-          {puppy.meta || `${puppy.breed} · ${puppy.gender} · ${puppy.age}`}
-        </span>
-      </div>
+      )}
     </Link>
   );
 }
