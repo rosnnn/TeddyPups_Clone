@@ -1,5 +1,8 @@
 # 🐾 TeddyPups U.A.E. — Luxury Pet Boutique & Concierge Platform
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-teddypups.rosnnn.online-2ea44f?style=for-the-badge&logo=googlechrome&logoColor=white)](https://teddypups.rosnnn.online)
+[![SSL](https://img.shields.io/badge/SSL-Let's_Encrypt-003A70?style=for-the-badge&logo=letsencrypt&logoColor=white)](https://teddypups.rosnnn.online)
+[![Nginx](https://img.shields.io/badge/Nginx-Production_Server-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://teddypups.rosnnn.online)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React Router](https://img.shields.io/badge/React_Router-v6-CA4245?style=for-the-badge&logo=react-router&logoColor=white)](https://reactrouter.com/)
@@ -7,7 +10,11 @@
 [![JavaScript](https://img.shields.io/badge/JavaScript-ESNext-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Responsive](https://img.shields.io/badge/Responsive-Mobile_%26_Desktop-success?style=for-the-badge&logo=responsive&logoColor=white)](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design)
 
-> A modern, pixel-perfect frontend replica of the **TeddyPups U.A.E.** luxury pet boutique platform ([puppy.instabizweb.com](https://puppy.instabizweb.com/)). Built from scratch as a modular, production-ready React application featuring an interactive procedural SVG physics mascot rig, smooth scroll-driven Bézier animations, custom plush design system, and full client-side routing.
+> 🌐 **Live Website**: [https://teddypups.rosnnn.online](https://teddypups.rosnnn.online)  
+> 🔒 **SSL Encrypted**: Let's Encrypt TLS (Strict HTTPS Redirection)  
+> 🎯 **Replica Target**: High-fidelity, production-grade recreation of [puppy.instabizweb.com](https://puppy.instabizweb.com/)
+> 
+> A modern, pixel-perfect frontend replica of the **TeddyPups U.A.E.** luxury pet boutique platform. Built from scratch as a modular, production-ready React application featuring an interactive procedural SVG physics mascot rig, smooth scroll-driven Bézier animations, custom plush design system, and full client-side routing.
 
 ---
 
@@ -132,6 +139,42 @@ TeddyPups_Clone/
 - **Routing**: [React Router DOM v6](https://reactrouter.com/) — Declarative client-side routing with parameter matching.
 - **Styling Architecture**: Vanilla CSS3 + Modern Design Tokens (`--color-toffee`, `--color-honey`, `--color-cocoa`, `--color-milk`) with zero framework lock-in or runtime CSS-in-JS overhead.
 - **Animations**: CSS Keyframes + `requestAnimationFrame` procedural physics loops + Web Animations API.
+- **Production Web Server**: Nginx with HTTP/2, Gzip compression, and SPA rewrite rules.
+- **SSL / Security**: Let's Encrypt automated TLS certificates with strict HTTPS enforcement.
+
+---
+
+## 🌐 Live Production Deployment & Architecture
+
+The application is deployed live on a cloud VPS running Ubuntu 22.04 LTS with automated SSL certificates:
+
+| Component | Configuration / Specification |
+| :--- | :--- |
+| **Live Domain** | [**https://teddypups.rosnnn.online**](https://teddypups.rosnnn.online) |
+| **DNS Resolution** | Custom Namecheap A-Record pointed to VPS IP (`178.94.251.68`) |
+| **Reverse Proxy** | Nginx with Gzip compression and 30-day static asset cache headers |
+| **SSL / TLS Certificate** | Let's Encrypt TLS v1.3 with automated HTTP-to-HTTPS redirect |
+| **SPA Routing** | `try_files $uri $uri/ /index.html;` fallback for all client-side routes |
+
+### Nginx SPA Production Configuration
+```nginx
+server {
+    server_name teddypups.rosnnn.online;
+    root /var/www/teddypups.rosnnn.online/html;
+    index index.html;
+
+    # Static assets caching
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|mp4|webm)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    # React client-side SPA routing fallback
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
 
 ---
 
