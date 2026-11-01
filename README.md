@@ -35,40 +35,53 @@ Rather than relying on a static scraper or raw build output, this project was ar
 ## 📁 Project Structure
 
 ```
-├── public/                     # Static public assets
-│   ├── brand/logo.png          # High-resolution brand logo
+├── public/                     # Static public assets (fonts, brand, media, cursors)
+│   ├── _next/                  # Original high-fidelity WOFF2 font files
+│   ├── brand/                  # Logo and brand marks
 │   ├── cursor/                 # Signature paw cursor SVGs
-│   ├── media/                  # Real puppy photos, videos & illustrations
+│   ├── media/                  # Puppy photography, videos & illustrations
 │   ├── icon.png                # Favicon
 │   └── apple-icon.png          # Apple touch icon
 ├── src/
-│   ├── components/             # Reusable UI components
-│   │   ├── Header.jsx          # Top navigation with scallop hem & mobile drawer
-│   │   ├── Footer.jsx          # Starry night sky footer with basket mascot
-│   │   ├── IntroCurtain.jsx    # Animated welcome curtain with running puppy SVG
-│   │   ├── PuppyCard.jsx       # Sketchbook card with stickers & video badge
-│   │   ├── PuppyModal.jsx      # Detailed gallery & video player modal
-│   │   └── ScrollToTop.jsx     # Route change scroll reset helper
-│   ├── pages/                  # Page route views
-│   │   ├── HomePage.jsx        # Complete homepage with 8 sections
-│   │   ├── PuppiesPage.jsx     # Available puppies with search & breed filters
-│   │   ├── GoneHomePage.jsx    # Adopted puppies archive
-│   │   ├── HappyFamiliesPage.jsx# Polaroid memory wall & testimonials
-│   │   ├── HowItWorksPage.jsx  # Concierge adoption journey & route switcher
-│   │   ├── FAQPage.jsx         # Searchable accordion FAQ
-│   │   ├── ContactPage.jsx     # Showroom visit & handwritten letter form
-│   │   └── PuppyDetailPage.jsx # Dynamic /puppies/:slug storybook profile
-│   ├── data/                   # Structured data models
-│   │   ├── puppies.js          # Complete catalog of 42+ puppies with media
-│   │   ├── reviews.js          # 64+ polaroid family moments
-│   │   └── faq.js              # Comprehensive FAQ questions & answers
+│   ├── components/             # Clean, reusable UI components
+│   │   ├── pup/                # Interactive animated puppy companion rig
+│   │   │   ├── PupBuddy.jsx    # Mascot buddy with emotional states & interactions
+│   │   │   ├── PupJourney.jsx  # Interactive adoption route runner
+│   │   │   ├── PupStop.jsx     # Journey step marker
+│   │   │   └── pupRig.jsx      # SVG body rig & physics
+│   │   ├── FlightAnimation.jsx # Concierge flight path animation
+│   │   ├── Footer.jsx          # Starry sky footer with newsletter & links
+│   │   ├── Header.jsx          # Dynamic navbar with scroll hide/fade & scallop hem
+│   │   ├── HeroLineup.jsx      # Homepage puppy lineup with animated badges
+│   │   ├── IntroCurtain.jsx    # "every puppy is family" welcome curtain & page transition
+│   │   ├── JourneyChatSection.jsx # Live WhatsApp journey dialogue simulator
+│   │   ├── MeetPupsSection.jsx # Available puppies treadmill preview
+│   │   ├── PawTrailCanvas.jsx  # Interactive canvas-based cursor paw print trail
+│   │   ├── PhotoLightbox.jsx   # Click-to-zoom memory wall lightbox modal
+│   │   ├── PuppyCard.jsx       # Card component with status stamps & badges
+│   │   ├── PuppyModal.jsx      # Puppy profile details & video player modal
+│   │   └── ScrollToTop.jsx     # Route transition scroll reset utility
+│   ├── pages/                  # Modular page views
+│   │   ├── HomePage.jsx        # Complete interactive landing page
+│   │   ├── PuppiesPage.jsx     # Puppies browser with dynamic filter pills
+│   │   ├── GoneHomePage.jsx    # Adopted puppies archive showcase
+│   │   ├── HappyFamiliesPage.jsx# 64+ polaroid memory wall & stories
+│   │   ├── HowItWorksPage.jsx  # 2-way adoption flow & flight journey
+│   │   ├── FAQPage.jsx         # Searchable interactive accordion FAQ
+│   │   ├── ContactPage.jsx     # Showroom visit guide, letter form & location map
+│   │   └── PuppyDetailPage.jsx # Dynamic /puppies/:slug puppy profile
+│   ├── data/                   # Structured data models & catalogs
+│   │   ├── puppies.js          # Available & adopted puppy profiles
+│   │   ├── reviews.js          # Authentic happy family reviews
+│   │   └── faq.js              # Comprehensive FAQ items
 │   ├── styles/
-│   │   └── theme.css           # Tailwind tokens, font variables & custom styles
-│   ├── App.jsx                 # Client router configuration
+│   │   └── theme.css           # Design tokens, keyframes & fluid typography
+│   ├── App.jsx                 # Client router configuration & global layout
 │   └── main.jsx                # React root mount point
-├── index.html                  # HTML5 entrypoint with Google Fonts
+├── index.html                  # HTML5 entrypoint with preloaded fonts
 ├── package.json                # Project dependencies and npm scripts
-├── vite.config.js              # Fast Vite bundler configuration
+├── vite.config.js              # Vite bundler configuration
+├── _archive/                   # Isolated raw scrapers, research scripts & dumps
 └── README.md                   # Project documentation & walkthrough
 ```
 
