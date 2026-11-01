@@ -149,8 +149,15 @@
   --default-font-family: var(--font-sans);
   --default-mono-font-family: var(--font-mono);
 
-  --header-h: 5.5rem;
-  --bar-h: 4.5rem;
+  --header-h: 4.75rem;
+  --bar-h: 0px;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --header-h: 4rem;
+    --bar-h: calc(4rem + env(safe-area-inset-bottom));
+  }
 }
 
 /* Custom Cursor Rules */
