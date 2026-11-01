@@ -1,3 +1,14 @@
+/**
+ * Header Component
+ * 
+ * Replicates the authentic Next.js header behavior:
+ * - Homepage (`data-home="true"`): Starts transparent over the hero sky at top.
+ * - Dynamic Scroll Fade: At `scrollY > 8` (`data-scrolled="true"`), smoothly transitions
+ *   milk background (`:before`) and scalloped SVG hem border (`.tp-header__hem`) to opacity 1.
+ * - Subpages (`:not([data-home])`): Solid milk background and scalloped hem border always visible.
+ * - Auto-Hide on Scroll Down: When scrolling down past 220px (`data-hidden="true"`), slides out
+ *   of view (`translateY(-120%)`). Re-appears on scroll up or focusin.
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 

@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import PUPPIES from '../data/puppies';
 
 export default function PuppyDetailPage() {
   const { slug } = useParams();
-  const navigate = useNavigate();
 
   const puppy = PUPPIES.find((p) => p.slug === slug);
   const [activeMedia, setActiveMedia] = useState('photo'); // 'photo' | 'video'

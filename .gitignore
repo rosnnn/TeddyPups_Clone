@@ -23,7 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
-# Scraper & Temporary Artifacts
+# Scraper & Temporary Artifacts (archived separately)
+_archive/
+scratch_*
 site/
 site.zip
 scraped_pages/

@@ -1,3 +1,15 @@
+/**
+ * IntroCurtain & RouteCurtain Component
+ * 
+ * Replicates the authentic Next.js page transition curtain ("every puppy is family"):
+ * 1. Initial Load: Starts in `data-state="intro"` with runner dashing across and 5 paw prints,
+ *    lifts blanket upward at 560ms, completes to `data-state="idle"` at 1040ms.
+ * 2. Page Navigation: Intercepts internal link clicks in capture phase:
+ *    - `covering` (300ms): Blanket drops down into view, locking vertical scroll.
+ *    - `covered`: Navigation executes and scroll resets to (0, 0) behind the curtain.
+ *    - `lifting` (460ms): Blanket lifts upward smoothly revealing the new page.
+ *    - `idle`: Unlocks scroll and hides curtain.
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
